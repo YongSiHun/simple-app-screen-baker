@@ -3,9 +3,9 @@ import type {
   ProjectDesign,
   Slide,
 } from '../../editor/types/project';
-import { getSlideImage } from '../../editor/services/images';
-import { resolveFrame } from '../utils/frame';
-import { contain, fitText, layout, type Rect } from '../utils/layout';
+import { getSlideImage } from '../../editor/services/images.ts';
+import { resolveFrame } from '../utils/frame.ts';
+import { contain, fitText, layout, type Rect } from '../utils/layout.ts';
 let fontPromise: Promise<void> | undefined;
 export function ensureFont() {
   fontPromise ??= (async () => {

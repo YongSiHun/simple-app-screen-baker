@@ -732,6 +732,9 @@ select {
   gap: 22px;
   padding: 0 28px;
 }
+.editor-header > .brand {
+  margin-right: auto;
+}
 .editor-header .brand img {
   width: 35px;
   height: 35px;
@@ -742,36 +745,10 @@ select {
 .editor-header .brand > span {
   font-size: 10px;
 }
-.header-divider {
-  height: 26px;
-  width: 1px;
-  background: #e2e8f0;
-}
-.project-name {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.project-name input {
-  width: 170px;
-  border: 1px solid transparent;
-  padding: 5px;
-  background: transparent;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 4px;
-}
-.project-name input:hover {
-  border-color: #dbe3ee;
-}
-.project-name > span {
-  font-size: 13px;
-  color: #94a3b8;
-}
+
 .editor-guide {
   font-size: 11px;
   color: #64748b;
-  margin-left: auto;
   white-space: nowrap;
 }
 .preset-select select {
@@ -1531,12 +1508,7 @@ select {
   .editor-guide {
     display: none;
   }
-  .project-name {
-    margin-right: auto;
-  }
-  .project-name input {
-    width: 140px;
-  }
+
   .editor-main {
     padding: 24px;
   }
@@ -1640,20 +1612,11 @@ select {
   .editor-header .brand {
     margin-right: auto;
   }
-  .header-divider {
-    display: none;
-  }
-  .project-name {
-    order: 2;
-    width: calc(100% - 200px);
-    margin: 0;
-  }
-  .project-name input {
-    width: calc(100% - 25px);
-  }
+
   .preset-select {
-    order: 3;
-    max-width: 200px;
+    order: 2;
+    flex: 1 0 100%;
+    max-width: none;
   }
   .preset-select select {
     max-width: 100%;
@@ -2107,4 +2070,10 @@ select {
   list-style: disc;
   padding-left: 18px;
   margin: 6px 0;
+}
+
+.preview-loading {
+  position: absolute;
+  color: #64748b;
+  font-size: 12px;
 }

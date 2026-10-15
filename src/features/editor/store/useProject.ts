@@ -19,7 +19,6 @@ interface State {
   presetId: string;
   select: (id: string) => void;
   setPreset: (id: string) => void;
-  setName: (name: string) => void;
   design: (patch: Partial<ProjectDesign>) => void;
   text: (id: string, patch: Partial<Pick<Slide, 'title' | 'subtitle'>>) => void;
   add: () => void;
@@ -52,7 +51,6 @@ export const useProject = create<State>((set) => ({
   presetId: 'iphone',
   select: (selectedId) => set({ selectedId }),
   setPreset: (presetId) => set({ presetId }),
-  setName: (name) => set((s) => ({ project: { ...s.project, name } })),
   design: (patch) =>
     set((s) => ({
       project: { ...s.project, design: { ...s.project.design, ...patch } },

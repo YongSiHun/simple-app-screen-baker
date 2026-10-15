@@ -1,3 +1,4 @@
+import { render } from '../src/features/rendering/services/render.ts';
 import { resolveSlideImage } from '../src/features/editor/utils/resolveSlideImage.ts';
 import { resolveFrame } from '../src/features/rendering/utils/frame.ts';
 import { createExportPlan } from '../src/features/export/services/plan.ts';
@@ -361,4 +362,88 @@ describe('shared screenshot selection', () => {
     resolveSlideImage({ images }, 'pc');
     assert.deepEqual(images, { phone: 'p' });
   });
+});
+
+describe('manual frame to automatic rendering', () => {
+  function recordingCanvas() {
+    let calls = [];
+    let width = 300;
+    let height = 150;
+    const ctx = { measureText: (text) => ({ width: text.length * 10 }) };
+    for (const name of [
+      'scale',
+      'beginPath',
+      'roundRect',
+      'fill',
+      'fillRect',
+      'save',
+      'restore',
+      'clip',
+      'drawImage',
+      'fillText',
+      'arc',
+    ]) {
+      ctx[name] = (...args) => calls.push([name, ...args]);
+    }
+    const canvas = {
+      get width() {
+        return width;
+      },
+      set width(value) {
+        width = value;
+        calls = [];
+      },
+      get height() {
+        return height;
+      },
+      set height(value) {
+        height = value;
+        calls = [];
+      },
+      getContext() {
+        return ctx;
+      },
+    };
+    return { canvas, snapshot: () => structuredClone(calls) };
+  }
+  const slide = { id: 'round-trip', title: '', subtitle: '', images: {} };
+  for (const preset of PRESETS)
+    for (const template of ['top', 'center', 'frameless']) {
+      it(
+        preset.id +
+          ' / ' +
+          template +
+          ' restores the automatic frame after every manual frame',
+        async () => {
+          const originalDocument = globalThis.document;
+          globalThis.document = {
+            fonts: { load: async () => [], check: () => true },
+          };
+          try {
+            const design = {
+              template,
+              background: '#EAF0FF',
+              textColor: '#0F172A',
+              font: 'Pretendard',
+              weight: 800,
+              frame: 'auto',
+              frameColor: '#111827',
+            };
+            const { canvas, snapshot } = recordingCanvas();
+            await render(canvas, preset, design, slide, true);
+            const initial = snapshot();
+            for (const frame of ['phone', 'tablet', 'pc']) {
+              await render(canvas, preset, { ...design, frame }, slide, true);
+              if (template !== 'frameless' && frame !== preset.device)
+                assert.notDeepEqual(snapshot(), initial);
+              await render(canvas, preset, design, slide, true);
+              assert.deepEqual(snapshot(), initial);
+            }
+          } finally {
+            if (originalDocument === undefined) delete globalThis.document;
+            else globalThis.document = originalDocument;
+          }
+        },
+      );
+    }
 });

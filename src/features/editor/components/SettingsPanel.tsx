@@ -241,7 +241,7 @@ export function SettingsPanel({
                 design({ frame: e.target.value as ProjectDesign['frame'] })
               }
             >
-              <option value="auto">출력 기기에 맞춤</option>
+              <option value="auto">출력 기기에 맞춤 ({labels[kind]})</option>
               {Object.entries(labels).map(([id, label]) => (
                 <option value={id} key={id}>
                   {label}

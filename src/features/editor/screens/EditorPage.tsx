@@ -9,7 +9,7 @@ import { SettingsPanel } from '../components/SettingsPanel';
 import { SlideList } from '../components/SlideList';
 import { ExportDialog } from '../../export/components/ExportDialog';
 export function EditorPage() {
-  const { project, selectedId, presetId, setPreset, setName } = useProject();
+  const { project, selectedId, presetId, setPreset } = useProject();
   const [exportOpen, setExportOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -22,18 +22,6 @@ export function EditorPage() {
       </a>
       <header className="editor-header">
         <Brand />
-        <span className="header-divider" />
-        <label className="project-name">
-          <span className="sr-only">프로젝트명</span>
-          <input
-            aria-label="프로젝트명"
-            maxLength={80}
-            value={project.name}
-            disabled={exporting}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <span>✎</span>
-        </label>
         <Link className="editor-guide" to="/guide">
           사용 가이드 ↗
         </Link>
@@ -92,7 +80,12 @@ export function EditorPage() {
               4장의 앱 화면을 준비하세요.
             </p>
           )}
-          <PreviewPanel preset={preset} design={project.design} slide={slide} />
+          <PreviewPanel
+            key={preset.id + ':' + project.design.frame}
+            preset={preset}
+            design={project.design}
+            slide={slide}
+          />
           <SlideList kind={preset.device} />
         </main>
       </fieldset>
