@@ -1,9 +1,10 @@
 import JSZip from 'jszip';
 import type { OutputPreset, Project, Slide } from '../../editor/types/project';
-import { getImage } from '../../editor/services/images';
+import { getImage, getSlideImage } from '../../editor/services/images';
 import { render } from '../../rendering/services/render';
 import { validatePreset } from '../constants/presets';
 import { encodeRgb } from './png';
+import { createExportPlan } from './plan';
 export async function png(
   project: Project,
   slide: Slide,
@@ -11,8 +12,8 @@ export async function png(
 ) {
   if (!validatePreset(preset))
     throw new Error('지원하지 않는 출력 규격입니다.');
-  if (!getImage(slide.images[preset.device]))
-    throw new Error(preset.label + '용 원본 이미지를 업로드해주세요.');
+  if (!getSlideImage(slide, preset.device))
+    throw new Error('이 슬라이드에 스크린샷을 업로드해주세요.');
   const canvas = document.createElement('canvas');
   try {
     await render(canvas, preset, project.design, slide);
@@ -43,11 +44,9 @@ export async function exportZip(
   presets: OutputPreset[],
   progress: (value: string) => void,
 ) {
-  const jobs = presets
-    .flatMap((preset) =>
-      project.slides.map((slide, index) => ({ preset, slide, index })),
-    )
-    .filter((j) => getImage(j.slide.images[j.preset.device]));
+  const { jobs, missing } = createExportPlan(project.slides, presets, (id) =>
+    Boolean(getImage(id)),
+  );
   if (!jobs.length)
     throw new Error('선택한 규격에 사용할 원본 이미지가 없습니다.');
   const zip = new JSZip();
@@ -72,5 +71,5 @@ export async function exportZip(
     (m: { percent: number }) => progress('ZIP ' + Math.round(m.percent) + '%'),
   );
   save(blob, 'screenbaker-screenshots.zip');
-  return presets.length * project.slides.length - jobs.length;
+  return missing;
 }

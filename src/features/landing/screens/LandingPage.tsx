@@ -139,7 +139,7 @@ export function LandingPage() {
               icon: 'image' as const,
               n: '02',
               title: '어떤 기기에도 어울리게',
-              text: '스마트폰부터 태블릿, PC까지. 기기별 화면을 등록하고 원하는 규격을 선택하세요.',
+              text: '스크린샷 한 장으로 스마트폰부터 태블릿, PC까지. 원하는 출력 규격을 선택하세요.',
             },
             {
               icon: 'download' as const,
@@ -221,7 +221,7 @@ export function LandingPage() {
             ],
             [
               '어떤 이미지가 필요한가요?',
-              'PNG, JPEG, WebP 형식의 앱 화면을 준비해주세요. 스마트폰, 태블릿, PC용 원본을 각각 등록할 수 있습니다.',
+              'PNG, JPEG, WebP 형식의 앱 화면 한 장이면 모든 기기 규격을 만들 수 있습니다. 기기별 화면을 따로 등록하면 해당 화면을 우선 사용합니다.',
             ],
             [
               '바로 스토어에 제출할 수 있나요?',

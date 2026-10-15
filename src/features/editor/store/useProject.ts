@@ -43,7 +43,7 @@ export const useProject = create<State>((set) => ({
       textColor: '#0F172A',
       font: 'Pretendard',
       weight: 800,
-      frame: 'phone',
+      frame: 'auto',
       frameColor: '#111827',
     },
     slides: [first],

@@ -1,3 +1,6 @@
+import type { DeviceKind, Slide } from '../types/project';
+import { resolveSlideImage } from '../utils/resolveSlideImage.ts';
+
 interface ImageResource {
   bitmap: ImageBitmap;
   url: string;
@@ -7,6 +10,14 @@ const resources = new Map<string, ImageResource>();
 export function getImage(id: string | undefined) {
   return id ? resources.get(id) : undefined;
 }
+export function getSlideImage(slide: Slide, device: DeviceKind) {
+  const source = resolveSlideImage(slide, device, (id) =>
+    Boolean(getImage(id)),
+  );
+  const image = getImage(source?.id);
+  return source && image ? { ...source, ...image } : undefined;
+}
+
 export async function loadImage(file: File): Promise<string> {
   if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type))
     throw new Error('PNG, JPEG, WebP 이미지만 사용할 수 있습니다.');

@@ -12,7 +12,7 @@ export interface ProjectDesign {
   textColor: string;
   font: 'Pretendard';
   weight: 600 | 800;
-  frame: DeviceKind;
+  frame: 'auto' | DeviceKind;
   frameColor: string;
 }
 export interface Project {

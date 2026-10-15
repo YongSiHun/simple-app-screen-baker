@@ -1,3 +1,6 @@
+import { resolveSlideImage } from '../src/features/editor/utils/resolveSlideImage.ts';
+import { resolveFrame } from '../src/features/rendering/utils/frame.ts';
+import { createExportPlan } from '../src/features/export/services/plan.ts';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { inflateSync } from 'node:zlib';
@@ -177,4 +180,185 @@ describe('RGB 24-bit PNG encoder', () => {
   });
   it('implements the standard CRC-32 check vector', () =>
     assert.equal(crc32(new TextEncoder().encode('123456789')), 0xcbf43926));
+});
+
+describe('device frames for batch export', () => {
+  for (const preset of PRESETS) {
+    it(
+      'uses the output device frame for ' + preset.id + ' in auto mode',
+      () => {
+        assert.equal(resolveFrame('auto', preset.device), preset.device);
+      },
+    );
+  }
+  it('preserves a manually selected phone frame on a tablet output', () => {
+    assert.equal(resolveFrame('phone', 'tablet'), 'phone');
+  });
+  it('preserves a manually selected tablet frame on a phone output', () => {
+    assert.equal(resolveFrame('tablet', 'phone'), 'tablet');
+  });
+  it('preserves a manually selected PC frame independently of output size', () => {
+    assert.equal(resolveFrame('pc', 'phone'), 'pc');
+  });
+});
+
+describe('ZIP export planning', () => {
+  const slide = (id, images) => ({ id, images, title: id, subtitle: '' });
+  it('exports all seven presets from one phone image', () => {
+    const plan = createExportPlan(
+      [slide('one', { phone: 'phone-image' })],
+      PRESETS,
+    );
+    assert.deepEqual(
+      plan.jobs.map((j) => j.preset.id),
+      PRESETS.map((p) => p.id),
+    );
+    assert.equal(plan.missing, 0);
+    assert.equal(
+      plan.availability.reduce((sum, p) => sum + p.reused, 0),
+      4,
+    );
+    assert.ok(plan.availability.every((p) => p.available === 1));
+  });
+  it('prefers dedicated images for all device types', () => {
+    const plan = createExportPlan(
+      [
+        slide('one', { phone: 'p1', tablet: 't1', pc: 'c1' }),
+        slide('two', { phone: 'p2', tablet: 't2', pc: 'c2' }),
+      ],
+      PRESETS,
+    );
+    assert.equal(plan.jobs.length, 14);
+    assert.equal(plan.missing, 0);
+    assert.ok(
+      plan.availability.every((p) => p.available === 2 && p.reused === 0),
+    );
+  });
+  it('exports all seven presets from one tablet image', () => {
+    const plan = createExportPlan(
+      [slide('one', { tablet: 'tablet-image' })],
+      PRESETS,
+    );
+    assert.equal(plan.jobs.length, 7);
+    assert.equal(plan.missing, 0);
+    assert.equal(
+      plan.availability.reduce((sum, p) => sum + p.reused, 0),
+      5,
+    );
+  });
+  it('exports all seven presets from one PC image', () => {
+    const plan = createExportPlan([slide('one', { pc: 'pc-image' })], PRESETS);
+    assert.equal(plan.jobs.length, 7);
+    assert.equal(plan.missing, 0);
+  });
+  it('keeps dedicated sources while reusing a source for the remaining device', () => {
+    const plan = createExportPlan(
+      [slide('one', { phone: 'phone', tablet: 'tablet' })],
+      PRESETS,
+    );
+    assert.equal(plan.jobs.length, 7);
+    for (const entry of plan.availability)
+      assert.equal(entry.reused, entry.preset.device === 'pc' ? 1 : 0);
+  });
+  it('preserves original slide numbering when an empty slide is skipped', () => {
+    const plan = createExportPlan(
+      [slide('one', {}), slide('two', { phone: 'p' })],
+      [PRESETS[0]],
+    );
+    assert.equal(plan.jobs[0].index, 1);
+    assert.equal(plan.jobs[0].slide.id, 'two');
+    assert.equal(plan.missing, 1);
+  });
+  it('skips a slide when none of its image resources exist', () => {
+    const plan = createExportPlan(
+      [slide('one', { phone: 'stale' })],
+      PRESETS,
+      (id) => id === 'loaded',
+    );
+    assert.equal(plan.jobs.length, 0);
+    assert.equal(plan.missing, 7);
+  });
+  it('falls back to a loaded resource when the dedicated image is stale', () => {
+    const plan = createExportPlan(
+      [slide('one', { phone: 'stale', tablet: 'loaded' })],
+      PRESETS,
+      (id) => id === 'loaded',
+    );
+    assert.equal(plan.jobs.length, 7);
+    assert.equal(plan.missing, 0);
+  });
+  it('does not create jobs for unchecked presets', () => {
+    const plan = createExportPlan([slide('one', { phone: 'p' })], [PRESETS[2]]);
+    assert.deepEqual(
+      plan.jobs.map((j) => j.preset.id),
+      ['ipad'],
+    );
+    assert.equal(plan.missing, 0);
+  });
+  it('exports every nonempty slide into every selected preset', () => {
+    const plan = createExportPlan(
+      [
+        slide('one', { phone: 'p' }),
+        slide('empty', {}),
+        slide('two', { pc: 'c' }),
+      ],
+      PRESETS,
+    );
+    assert.equal(plan.jobs.length, 14);
+    assert.equal(plan.missing, 7);
+    assert.ok(
+      plan.availability.every((p) => p.available === 2 && p.missing === 1),
+    );
+  });
+});
+
+describe('shared screenshot selection', () => {
+  it('reuses a single image across all device types', () => {
+    const slide = { images: { phone: 'original' } };
+    for (const device of ['phone', 'tablet', 'pc'])
+      assert.deepEqual(resolveSlideImage(slide, device), {
+        id: 'original',
+        device: 'phone',
+        reused: device !== 'phone',
+      });
+  });
+  it('uses a dedicated tablet screenshot before the shared phone screenshot', () => {
+    assert.deepEqual(
+      resolveSlideImage({ images: { phone: 'p', tablet: 't' } }, 'tablet'),
+      { id: 't', device: 'tablet', reused: false },
+    );
+  });
+  it('reuses a tablet image when no phone image exists', () => {
+    assert.equal(
+      resolveSlideImage({ images: { tablet: 't' } }, 'phone').id,
+      't',
+    );
+  });
+  it('reuses a PC image when it is the only image', () => {
+    assert.equal(resolveSlideImage({ images: { pc: 'c' } }, 'tablet').id, 'c');
+  });
+  it('falls back deterministically when several reusable sources exist', () => {
+    assert.equal(
+      resolveSlideImage({ images: { phone: 'p', tablet: 't' } }, 'pc').id,
+      'p',
+    );
+  });
+  it('ignores missing resources and tries another source', () => {
+    assert.equal(
+      resolveSlideImage(
+        { images: { phone: 'stale', tablet: 'loaded' } },
+        'phone',
+        (id) => id === 'loaded',
+      ).id,
+      'loaded',
+    );
+  });
+  it('returns no source for an empty slide', () => {
+    assert.equal(resolveSlideImage({ images: {} }, 'pc'), undefined);
+  });
+  it('reuses references without copying or changing slide images', () => {
+    const images = Object.freeze({ phone: 'p' });
+    resolveSlideImage({ images }, 'pc');
+    assert.deepEqual(images, { phone: 'p' });
+  });
 });

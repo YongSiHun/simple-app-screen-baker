@@ -1,5 +1,5 @@
 import { useProject } from '../store/useProject';
-import { getImage } from '../services/images';
+import { getSlideImage } from '../services/images';
 import type { DeviceKind } from '../types/project';
 import { Icon } from '../../../core/components/Icons';
 export function SlideList({ kind }: { kind: DeviceKind }) {
@@ -18,7 +18,7 @@ export function SlideList({ kind }: { kind: DeviceKind }) {
       </div>
       <div className="slide-list">
         {project.slides.map((s, i) => {
-          const image = getImage(s.images[kind]);
+          const image = getSlideImage(s, kind);
           return (
             <div
               className={'slide-item ' + (s.id === selectedId ? 'active' : '')}

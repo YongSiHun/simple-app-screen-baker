@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
-import type { DeviceKind } from '../types/project';
+import type { DeviceKind, ProjectDesign } from '../types/project';
 import { useProject } from '../store/useProject';
-import { loadImage, releaseUnused } from '../services/images';
+import { getSlideImage, loadImage, releaseUnused } from '../services/images';
 import { TEMPLATES } from '../../templates/definitions/templates';
 import { Icon } from '../../../core/components/Icons';
 const labels: Record<DeviceKind, string> = {
@@ -19,6 +19,7 @@ export function SettingsPanel({
   const { project, selectedId, design, text, attach } = useProject();
   const slide = project.slides.find((s) => s.id === selectedId)!;
   const d = project.design;
+  const image = getSlideImage(slide, kind);
   const input = useRef<HTMLInputElement>(null);
   const [drag, setDrag] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -83,8 +84,14 @@ export function SettingsPanel({
           <b>{busy ? '이미지 읽는 중…' : '클릭 또는 드래그하여 업로드'}</b>
           <small>PNG, JPEG, WebP · 파일당 최대 25MB</small>
           <em>
-            {labels[kind]} 원본 {slide.images[kind] ? '교체' : '추가'} · 여러 장
-            선택 가능
+            {image?.reused
+              ? labels[image.device] +
+                ' 화면 재사용 중 · ' +
+                labels[kind] +
+                ' 전용 화면 추가 가능'
+              : image
+                ? labels[kind] + ' 화면 교체 · 여러 장 선택 가능'
+                : '한 장으로 모든 기기 규격 생성 · 여러 장 선택 가능'}
           </em>
         </button>
         <input
@@ -100,6 +107,9 @@ export function SettingsPanel({
             {error}
           </p>
         )}
+        <p className="field-help">
+          다른 기기용 화면이 없으면 업로드한 이미지를 비율 유지해 재사용해요.
+        </p>
         <p className="field-help">
           <Icon name="lock" size={12} /> 이미지는 내 브라우저에만 머물러요.
         </p>
@@ -227,8 +237,11 @@ export function SettingsPanel({
             기기 프레임
             <select
               value={d.frame}
-              onChange={(e) => design({ frame: e.target.value as DeviceKind })}
+              onChange={(e) =>
+                design({ frame: e.target.value as ProjectDesign['frame'] })
+              }
             >
+              <option value="auto">출력 기기에 맞춤</option>
               {Object.entries(labels).map(([id, label]) => (
                 <option value={id} key={id}>
                   {label}
@@ -248,7 +261,8 @@ export function SettingsPanel({
           </label>
         </div>
         <p className="field-help">
-          프레임 외형과 출력 규격은 독립적으로 선택할 수 있어요.
+          기본 프레임은 출력 기기에 맞춰 적용돼요. 원하는 외형을 직접 선택할
+          수도 있어요.
         </p>
       </section>
     </aside>

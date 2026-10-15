@@ -3,7 +3,8 @@ import type {
   ProjectDesign,
   Slide,
 } from '../../editor/types/project';
-import { getImage } from '../../editor/services/images';
+import { getSlideImage } from '../../editor/services/images';
+import { resolveFrame } from '../utils/frame';
 import { contain, fitText, layout, type Rect } from '../utils/layout';
 let fontPromise: Promise<void> | undefined;
 export function ensureFont() {
@@ -78,12 +79,13 @@ export async function render(
   ctx.fillRect(0, 0, w, h);
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
-  const l = layout(w, h, design.template, design.frame);
-  const image = getImage(slide.images[preset.device])?.bitmap;
+  const frame = resolveFrame(design.frame, preset.device);
+  const l = layout(w, h, design.template, frame);
+  const image = getSlideImage(slide, preset.device)?.bitmap;
   const ratio =
-    design.frame === 'phone'
+    frame === 'phone'
       ? 9 / 19.5
-      : design.frame === 'tablet'
+      : frame === 'tablet'
         ? l.landscape
           ? 16 / 10
           : 3 / 4
@@ -92,11 +94,11 @@ export async function render(
   const bezel =
     design.template === 'frameless'
       ? 0
-      : outer.width * (design.frame === 'phone' ? 0.032 : 0.022);
+      : outer.width * (frame === 'phone' ? 0.032 : 0.022);
   const radius =
     design.template === 'frameless'
       ? outer.width * 0.012
-      : outer.width * (design.frame === 'phone' ? 0.115 : 0.045);
+      : outer.width * (frame === 'phone' ? 0.115 : 0.045);
   if (bezel) {
     ctx.save();
     ctx.shadowColor = '#0F172A25';
@@ -141,7 +143,7 @@ export async function render(
   }
   ctx.restore();
   if (bezel) {
-    if (design.frame === 'phone') {
+    if (frame === 'phone') {
       rounded(
         ctx,
         {
@@ -165,7 +167,7 @@ export async function render(
       ctx.fillStyle = '#64748B';
       ctx.fill();
     }
-    if (design.frame === 'pc') {
+    if (frame === 'pc') {
       rounded(
         ctx,
         {
