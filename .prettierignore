@@ -1,0 +1,13 @@
+node_modules/
+dist/
+dist-ssr/
+coverage/
+.vite/
+.cache/
+.npm-cache/
+.verification/
+.wrangler/
+public/fonts/
+package-lock.json
+*.tsbuildinfo
+*.log
