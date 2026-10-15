@@ -6,6 +6,7 @@ export default ts.config(
   {
     ignores: [
       'dist',
+      'docs',
       'dist-ssr',
       'coverage',
       '.vite',

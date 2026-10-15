@@ -9,5 +9,7 @@ coverage/
 .wrangler/
 public/fonts/
 package-lock.json
+yarn.lock
 *.tsbuildinfo
 *.log
+docs/

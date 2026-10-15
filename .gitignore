@@ -18,6 +18,10 @@
 # Fonts and original OFL license are copied by scripts/prepare-fonts.mjs
 /public/fonts/
 
+# Yarn Classic installation metadata; keep yarn.lock tracked
+.yarn-integrity
+/package-lock.json
+
 # Local environment files; keep shareable examples
 .env
 .env.*
@@ -35,3 +39,6 @@ Desktop.ini
 *.swp
 *.swo
 *~
+
+# Local development documentation
+/docs/
