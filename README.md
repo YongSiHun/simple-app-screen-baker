@@ -23,3 +23,5 @@ yarn build
 ```
 
 출력: `dist/`
+
+Workers 로컬 미리보기: 빌드 후 `yarn preview` → http://localhost:8787
