@@ -25,3 +25,15 @@ yarn build
 출력: `dist/`
 
 Workers 로컬 미리보기: 빌드 후 `yarn preview` → http://localhost:8787
+
+## 코드 정리와 검사
+
+```sh
+yarn format
+yarn format:check
+yarn lint
+yarn lint:fix
+yarn test
+```
+
+조건문과 반복문은 중괄호를 사용하고, `if` 조건은 이름 있는 boolean 변수로 분리합니다. 조기 반환과 제어문 앞뒤 줄바꿈도 린트로 검사합니다.

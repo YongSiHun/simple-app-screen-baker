@@ -3,34 +3,33 @@ import type {
   ProjectDesign,
   Slide,
 } from '../../editor/types/project';
-import { getSlideImage } from '../../editor/services/images.ts';
-import { resolveFrame } from '../utils/frame.ts';
-import { contain, fitText, layout, type Rect } from '../utils/layout.ts';
+import { drawDevice } from './drawDevice.ts';
+import { fitText, type Rect } from '../utils/layout.ts';
 let fontPromise: Promise<void> | undefined;
+/**
+ * 렌더링에 필요한 글꼴을 한 번만 읽고 준비 상태를 확인합니다.
+ */
 export function ensureFont() {
   fontPromise ??= (async () => {
     await Promise.all([
       document.fonts.load('600 32px Pretendard', '앱 스크린샷'),
       document.fonts.load('800 32px Pretendard', '앱 스크린샷'),
     ]);
-    if (!document.fonts.check('800 32px Pretendard'))
+    const isFontUnavailable = !document.fonts.check('800 32px Pretendard');
+
+    if (isFontUnavailable) {
       throw new Error(
         'Pretendard 폰트를 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.',
       );
+    }
   })();
+
   return fontPromise;
 }
-function rounded(
-  ctx: CanvasRenderingContext2D,
-  r: Rect,
-  radius: number,
-  fill: string,
-) {
-  ctx.beginPath();
-  ctx.roundRect(r.x, r.y, r.width, r.height, radius);
-  ctx.fillStyle = fill;
-  ctx.fill();
-}
+
+/**
+ * 문구를 영역에 맞게 줄바꿈하고 크기를 조절해 그립니다.
+ */
 function drawText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -40,9 +39,15 @@ function drawText(
   color: string,
   center: boolean,
 ) {
-  if (!text.trim()) return;
+  const isEmptyText = !text.trim();
+
+  if (isEmptyText) {
+    return;
+  }
+
   const fitted = fitText(text, box, max, max * 0.3, (t, s) => {
     ctx.font = weight + ' ' + s + 'px Pretendard';
+
     return ctx.measureText(t).width;
   });
   ctx.font = weight + ' ' + fitted.size + 'px Pretendard';
@@ -57,21 +62,31 @@ function drawText(
     ),
   );
 }
+
+/**
+ * 배경·기기·문구를 미리보기 또는 다운로드 해상도로 그립니다.
+ */
 export async function render(
   canvas: HTMLCanvasElement,
   preset: OutputPreset,
   design: ProjectDesign,
   slide: Slide,
   preview = false,
+  previewZoom = 1,
 ) {
   await ensureFont();
   const scale = preview
-    ? Math.min(1, 1000 / Math.max(preset.width, preset.height))
+    ? Math.min(1, (1000 * previewZoom) / Math.max(preset.width, preset.height))
     : 1;
   canvas.width = Math.round(preset.width * scale);
   canvas.height = Math.round(preset.height * scale);
   const ctx = canvas.getContext('2d', { alpha: false });
-  if (!ctx) throw new Error('Canvas를 사용할 수 없는 브라우저입니다.');
+  const hasNoContext = !ctx;
+
+  if (hasNoContext) {
+    throw new Error('Canvas를 사용할 수 없는 브라우저입니다.');
+  }
+
   ctx.scale(scale, scale);
   const w = preset.width,
     h = preset.height;
@@ -79,119 +94,7 @@ export async function render(
   ctx.fillRect(0, 0, w, h);
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
-  const frame = resolveFrame(design.frame, preset.device);
-  const l = layout(w, h, design.template, frame);
-  const image = getSlideImage(slide, preset.device)?.bitmap;
-  const ratio =
-    frame === 'phone'
-      ? 9 / 19.5
-      : frame === 'tablet'
-        ? l.landscape
-          ? 16 / 10
-          : 3 / 4
-        : 16 / 10;
-  const outer = contain(ratio, 1, l.device);
-  const bezel =
-    design.template === 'frameless'
-      ? 0
-      : outer.width * (frame === 'phone' ? 0.032 : 0.022);
-  const radius =
-    design.template === 'frameless'
-      ? outer.width * 0.012
-      : outer.width * (frame === 'phone' ? 0.115 : 0.045);
-  if (bezel) {
-    ctx.save();
-    ctx.shadowColor = '#0F172A25';
-    ctx.shadowBlur = w * 0.025;
-    ctx.shadowOffsetY = w * 0.012;
-    rounded(ctx, outer, radius, design.frameColor);
-    ctx.restore();
-  }
-  const screen = {
-    x: outer.x + bezel,
-    y: outer.y + bezel,
-    width: outer.width - 2 * bezel,
-    height: outer.height - 2 * bezel,
-  };
-  ctx.save();
-  ctx.beginPath();
-  ctx.roundRect(
-    screen.x,
-    screen.y,
-    screen.width,
-    screen.height,
-    Math.max(0, radius - bezel),
-  );
-  ctx.clip();
-  ctx.fillStyle = '#F8FAFC';
-  ctx.fillRect(screen.x, screen.y, screen.width, screen.height);
-  if (image) {
-    const r = contain(image.width, image.height, screen);
-    ctx.drawImage(image, r.x, r.y, r.width, r.height);
-  } else {
-    ctx.fillStyle = '#E2E8F0';
-    ctx.fillRect(screen.x, screen.y, screen.width, screen.height);
-    ctx.fillStyle = '#94A3B8';
-    ctx.font = '600 ' + outer.width * 0.052 + 'px Pretendard';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(
-      '스크린샷을 업로드하세요',
-      screen.x + screen.width / 2,
-      screen.y + screen.height / 2,
-    );
-  }
-  ctx.restore();
-  if (bezel) {
-    if (frame === 'phone') {
-      rounded(
-        ctx,
-        {
-          x: outer.x + outer.width * 0.35,
-          y: outer.y + bezel * 1.4,
-          width: outer.width * 0.3,
-          height: bezel * 1.3,
-        },
-        bezel,
-        '#111827',
-      );
-    } else {
-      ctx.beginPath();
-      ctx.arc(
-        outer.x + outer.width / 2,
-        outer.y + bezel / 2,
-        bezel * 0.15,
-        0,
-        Math.PI * 2,
-      );
-      ctx.fillStyle = '#64748B';
-      ctx.fill();
-    }
-    if (frame === 'pc') {
-      rounded(
-        ctx,
-        {
-          x: outer.x + outer.width * 0.42,
-          y: outer.y + outer.height,
-          width: outer.width * 0.16,
-          height: l.device.height * 0.055,
-        },
-        0,
-        design.frameColor,
-      );
-      rounded(
-        ctx,
-        {
-          x: outer.x + outer.width * 0.29,
-          y: outer.y + outer.height + l.device.height * 0.05,
-          width: outer.width * 0.42,
-          height: l.device.height * 0.015,
-        },
-        4,
-        design.frameColor,
-      );
-    }
-  }
+  const l = drawDevice(ctx, preset, design, slide);
   drawText(
     ctx,
     slide.title,
@@ -210,5 +113,6 @@ export async function render(
     design.textColor,
     !l.landscape,
   );
+
   return canvas;
 }

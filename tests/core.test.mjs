@@ -33,16 +33,19 @@ describe('aspect-preserving layout', () => {
       { x: 0, y: 25, width: 100, height: 50 },
     );
   });
-  for (const p of PRESETS)
-    for (const template of ['top', 'center', 'frameless'])
+
+  for (const p of PRESETS) {
+    for (const template of ['top', 'center', 'frameless']) {
       it(p.id + ' / ' + template + ' stays within bounds', () => {
         const result = layout(p.width, p.height, template, p.device);
+
         for (const r of [result.title, result.subtitle, result.device]) {
           assert.ok(r.x >= 0 && r.y >= 0);
           assert.ok(r.width > 0 && r.height > 0);
           assert.ok(r.x + r.width <= p.width + 0.001);
           assert.ok(r.y + r.height <= p.height + 0.001);
         }
+
         const a = result.title,
           b = result.device;
         assert.ok(
@@ -52,12 +55,18 @@ describe('aspect-preserving layout', () => {
             b.y + b.height <= a.y,
         );
       });
+    }
+  }
+
   it('uses distinct portrait and landscape arrangements', () => {
     assert.equal(layout(100, 200, 'top', 'phone').landscape, false);
     assert.equal(layout(200, 100, 'top', 'phone').landscape, true);
   });
 });
 describe('text wrapping and fitting', () => {
+  /**
+   * 텍스트 배치 테스트를 위한 고정 폭을 계산합니다.
+   */
   const measure = (t) => Array.from(t).length * 10;
   it('wraps Korean text', () =>
     assert.deepEqual(wrapText('가나다라마', 20, measure), [
@@ -100,8 +109,10 @@ describe('text wrapping and fitting', () => {
     ));
 });
 describe('output preset validation', () => {
-  for (const p of PRESETS)
+  for (const p of PRESETS) {
     it('accepts ' + p.id, () => assert.equal(validatePreset(p), true));
+  }
+
   it('rejects unknown Apple dimensions', () =>
     assert.equal(validatePreset({ ...PRESETS[0], width: 1000 }), false));
   it('rejects non-integer sizes', () =>
@@ -136,12 +147,18 @@ describe('RGB 24-bit PNG encoder', () => {
     });
     const view = new DataView(png.buffer);
     let compressed;
+
     for (let o = 8; o < png.length;) {
       const length = view.getUint32(o);
-      if (view.getUint32(o + 4) === 0x49444154)
+      const isImageChunk = view.getUint32(o + 4) === 0x49444154;
+
+      if (isImageChunk) {
         compressed = png.subarray(o + 8, o + 8 + length);
+      }
+
       o += length + 12;
     }
+
     assert.ok(compressed);
     assert.deepEqual(
       [...inflateSync(compressed)],
@@ -151,12 +168,14 @@ describe('RGB 24-bit PNG encoder', () => {
   it('encodes and verifies a real preset at full resolution', async () => {
     const p = PRESETS[0];
     const rgba = new Uint8Array(p.width * p.height * 4);
+
     for (let i = 0; i < rgba.length; i += 4) {
       rgba[i] = 37;
       rgba[i + 1] = 99;
       rgba[i + 2] = 235;
       rgba[i + 3] = 255;
     }
+
     const png = await encodeRgb(p.width, p.height, rgba);
     assert.equal(verifyPng(png, p.width, p.height).colorType, 2);
   });
@@ -192,6 +211,7 @@ describe('device frames for batch export', () => {
       },
     );
   }
+
   it('preserves a manually selected phone frame on a tablet output', () => {
     assert.equal(resolveFrame('phone', 'tablet'), 'phone');
   });
@@ -204,6 +224,9 @@ describe('device frames for batch export', () => {
 });
 
 describe('ZIP export planning', () => {
+  /**
+   * 테스트용 슬라이드 데이터를 준비합니다.
+   */
   const slide = (id, images) => ({ id, images, title: id, subtitle: '' });
   it('exports all seven presets from one phone image', () => {
     const plan = createExportPlan(
@@ -258,8 +281,10 @@ describe('ZIP export planning', () => {
       PRESETS,
     );
     assert.equal(plan.jobs.length, 7);
-    for (const entry of plan.availability)
+
+    for (const entry of plan.availability) {
       assert.equal(entry.reused, entry.preset.device === 'pc' ? 1 : 0);
+    }
   });
   it('preserves original slide numbering when an empty slide is skipped', () => {
     const plan = createExportPlan(
@@ -316,12 +341,14 @@ describe('ZIP export planning', () => {
 describe('shared screenshot selection', () => {
   it('reuses a single image across all device types', () => {
     const slide = { images: { phone: 'original' } };
-    for (const device of ['phone', 'tablet', 'pc'])
+
+    for (const device of ['phone', 'tablet', 'pc']) {
       assert.deepEqual(resolveSlideImage(slide, device), {
         id: 'original',
         device: 'phone',
         reused: device !== 'phone',
       });
+    }
   });
   it('uses a dedicated tablet screenshot before the shared phone screenshot', () => {
     assert.deepEqual(
@@ -365,11 +392,15 @@ describe('shared screenshot selection', () => {
 });
 
 describe('manual frame to automatic rendering', () => {
+  /**
+   * 렌더링 명령을 기록하는 테스트용 캔버스를 만듭니다.
+   */
   function recordingCanvas() {
     let calls = [];
     let width = 300;
     let height = 150;
     const ctx = { measureText: (text) => ({ width: text.length * 10 }) };
+
     for (const name of [
       'scale',
       'beginPath',
@@ -385,6 +416,7 @@ describe('manual frame to automatic rendering', () => {
     ]) {
       ctx[name] = (...args) => calls.push([name, ...args]);
     }
+
     const canvas = {
       get width() {
         return width;
@@ -400,14 +432,25 @@ describe('manual frame to automatic rendering', () => {
         height = value;
         calls = [];
       },
+      /**
+       * 테스트에서 사용하는 그리기 컨텍스트를 반환합니다.
+       */
       getContext() {
         return ctx;
       },
     };
-    return { canvas, snapshot: () => structuredClone(calls) };
+
+    return {
+      canvas /**
+       * 실행 취소에 필요한 프로젝트와 선택 상태를 보관합니다.
+       */,
+      snapshot: () => structuredClone(calls),
+    };
   }
+
   const slide = { id: 'round-trip', title: '', subtitle: '', images: {} };
-  for (const preset of PRESETS)
+
+  for (const preset of PRESETS) {
     for (const template of ['top', 'center', 'frameless']) {
       it(
         preset.id +
@@ -419,6 +462,7 @@ describe('manual frame to automatic rendering', () => {
           globalThis.document = {
             fonts: { load: async () => [], check: () => true },
           };
+
           try {
             const design = {
               template,
@@ -432,18 +476,30 @@ describe('manual frame to automatic rendering', () => {
             const { canvas, snapshot } = recordingCanvas();
             await render(canvas, preset, design, slide, true);
             const initial = snapshot();
+
             for (const frame of ['phone', 'tablet', 'pc']) {
               await render(canvas, preset, { ...design, frame }, slide, true);
-              if (template !== 'frameless' && frame !== preset.device)
+              const hasDifferentFrame =
+                template !== 'frameless' && frame !== preset.device;
+
+              if (hasDifferentFrame) {
                 assert.notDeepEqual(snapshot(), initial);
+              }
+
               await render(canvas, preset, design, slide, true);
               assert.deepEqual(snapshot(), initial);
             }
           } finally {
-            if (originalDocument === undefined) delete globalThis.document;
-            else globalThis.document = originalDocument;
+            const hadNoDocument = originalDocument === undefined;
+
+            if (hadNoDocument) {
+              delete globalThis.document;
+            } else {
+              globalThis.document = originalDocument;
+            }
           }
         },
       );
     }
+  }
 });

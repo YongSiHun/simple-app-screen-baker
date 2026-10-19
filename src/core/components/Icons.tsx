@@ -1,3 +1,6 @@
+/**
+ * 이름에 맞는 공통 SVG 아이콘을 표시합니다.
+ */
 export function Icon({
   name,
   size = 20,
@@ -25,6 +28,7 @@ export function Icon({
     image: 'M3 3h18v18H3Zm0 13 6-6 5 5 3-3 4 4M15 7h.01',
     close: 'm6 6 12 12M6 18 18 6',
   };
+
   return (
     <svg
       width={size}

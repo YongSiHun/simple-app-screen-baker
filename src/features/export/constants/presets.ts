@@ -75,16 +75,34 @@ export const PRESETS: OutputPreset[] = [
     folder: 'chromebook',
   },
 ];
+/**
+ * 플랫폼별 출력 크기와 방향이 지원 범위인지 검사합니다.
+ */
 export function validatePreset(p: OutputPreset): boolean {
-  if (!Number.isInteger(p.width) || !Number.isInteger(p.height)) return false;
-  if (p.orientation !== (p.width > p.height ? 'landscape' : 'portrait'))
+  const hasInvalidDimensions =
+    !Number.isInteger(p.width) || !Number.isInteger(p.height);
+
+  if (hasInvalidDimensions) {
     return false;
-  if (p.platform === 'google-play')
+  }
+
+  const hasWrongOrientation =
+    p.orientation !== (p.width > p.height ? 'landscape' : 'portrait');
+
+  if (hasWrongOrientation) {
+    return false;
+  }
+
+  const isGooglePlay = p.platform === 'google-play';
+
+  if (isGooglePlay) {
     return (
       Math.min(p.width, p.height) >= 320 &&
       Math.max(p.width, p.height) <= 3840 &&
       Math.max(p.width, p.height) <= 2 * Math.min(p.width, p.height)
     );
+  }
+
   return PRESETS.some(
     (v) =>
       v.id === p.id &&

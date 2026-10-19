@@ -1,10 +1,16 @@
 export type DeviceKind = 'phone' | 'tablet' | 'pc';
 export type TemplateId = 'top' | 'center' | 'frameless';
+export type SlideElement = 'title' | 'subtitle' | 'device';
+export interface ElementPosition {
+  x: number;
+  y: number;
+}
 export interface Slide {
   id: string;
   title: string;
   subtitle: string;
   images: Partial<Record<DeviceKind, string>>;
+  positions?: Partial<Record<SlideElement, ElementPosition>>;
 }
 export interface ProjectDesign {
   template: TemplateId;

@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import ts from 'typescript-eslint';
 import hooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
+import { readabilityRules } from './scripts/eslint-rules.mjs';
 export default ts.config(
   {
     ignores: [
@@ -20,6 +21,23 @@ export default ts.config(
   },
   js.configs.recommended,
   ...ts.configs.recommended,
+  {
+    plugins: { readability: readabilityRules },
+    rules: {
+      curly: ['error', 'all'],
+      'no-else-return': ['error', { allowElseIf: false }],
+      'readability/named-boolean-condition': 'error',
+      'padding-line-between-statements': [
+        'error',
+        {
+          blankLine: 'always',
+          prev: '*',
+          next: ['return', 'if', 'for', 'while', 'try'],
+        },
+        { blankLine: 'always', prev: 'block-like', next: '*' },
+      ],
+    },
+  },
   { files: ['**/*.{js,mjs}'], languageOptions: { globals: globals.node } },
   {
     files: ['**/*.{ts,tsx}'],

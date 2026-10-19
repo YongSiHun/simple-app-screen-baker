@@ -1,5 +1,8 @@
 import { Link } from 'react-router';
 import { Icon } from '../../../core/components/Icons';
+/**
+ * 소개 화면에 사용할 예시 기기 이미지를 표시합니다.
+ */
 function DemoPhone({ second = false }: { second?: boolean }) {
   return (
     <div className={'demo-poster ' + (second ? 'second' : '')}>
@@ -51,6 +54,10 @@ function DemoPhone({ second = false }: { second?: boolean }) {
     </div>
   );
 }
+
+/**
+ * 도구의 기능과 제작 흐름을 소개합니다.
+ */
 export function LandingPage() {
   return (
     <main id="main-content">

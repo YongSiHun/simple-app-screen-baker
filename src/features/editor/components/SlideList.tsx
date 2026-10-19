@@ -2,9 +2,13 @@ import { useProject } from '../store/useProject';
 import { getSlideImage } from '../services/images';
 import type { DeviceKind } from '../types/project';
 import { Icon } from '../../../core/components/Icons';
+/**
+ * 슬라이드 선택·추가·복제·정렬·삭제 도구를 표시합니다.
+ */
 export function SlideList({ kind }: { kind: DeviceKind }) {
   const { project, selectedId, select, add, remove, duplicate, move } =
     useProject();
+
   return (
     <section className="slides-panel" aria-label="스크린샷 목록">
       <div className="slides-heading">
@@ -19,6 +23,7 @@ export function SlideList({ kind }: { kind: DeviceKind }) {
       <div className="slide-list">
         {project.slides.map((s, i) => {
           const image = getSlideImage(s, kind);
+
           return (
             <div
               className={'slide-item ' + (s.id === selectedId ? 'active' : '')}
