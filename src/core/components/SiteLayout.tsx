@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router';
+import { SiteCredits } from './SiteCredits';
 /**
  * 편집기로 돌아가는 브랜드 링크를 표시합니다.
  */
@@ -47,7 +48,9 @@ export function SiteLayout() {
           <Link to="/privacy">개인정보처리방침</Link>
           <Link to="/terms">이용약관</Link>
         </div>
-        <small>© {new Date().getFullYear()} Simple App Screen Baker</small>
+        <small>
+          <SiteCredits />
+        </small>
       </footer>
     </>
   );

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { SiteCredits } from '../../../core/components/SiteCredits';
 import { useProject } from '../store/useProject';
 import { PRESETS } from '../../export/constants/presets';
 import { PreviewPanel } from '../components/PreviewPanel';
@@ -76,6 +77,9 @@ export function EditorPage() {
           <SlideList kind={preset.device} />
         </main>
       </fieldset>
+      <footer className="editor-footer">
+        <SiteCredits />
+      </footer>
     </div>
   );
 }

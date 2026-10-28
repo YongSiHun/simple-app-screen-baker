@@ -2423,3 +2423,21 @@ select {
   background-clip: padding-box;
   border-radius: 8px;
 }
+
+.site-credits {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+}
+.site-credits a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.editor-footer {
+  padding: 18px 24px;
+  border-top: 1px solid #e2e8f0;
+  color: #64748b;
+  font-size: 11px;
+  text-align: center;
+}
