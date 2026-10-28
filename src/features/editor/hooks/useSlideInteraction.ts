@@ -22,6 +22,7 @@ export function useSlideInteraction(
 ) {
   const surface = useRef<HTMLDivElement>(null);
   const drag = useRef<SlideDragState | null>(null);
+  const dragged = useRef(false);
   const { position, beginEdit, endEdit, cancelEdit } = useProject();
   const [selection, setSelection] = useState<SlideSelection | null>(null);
   const selected = selection?.slideId === slide.id ? selection.element : null;
@@ -48,6 +49,7 @@ export function useSlideInteraction(
       return;
     }
 
+    dragged.current = false;
     event.preventDefault();
     event.stopPropagation();
     event.currentTarget.focus({ preventScroll: true });
@@ -77,6 +79,15 @@ export function useSlideInteraction(
       return;
     }
 
+    const isClick =
+      !dragged.current &&
+      Math.hypot(event.clientX - current.x, event.clientY - current.y) < 4;
+
+    if (isClick) {
+      return;
+    }
+
+    dragged.current = true;
     position(
       slide.id,
       current.element,
@@ -119,6 +130,7 @@ export function useSlideInteraction(
     }
 
     if (cancel) {
+      dragged.current = true;
       cancelEdit();
       releaseDrag(event, event.pointerId);
 
@@ -141,6 +153,7 @@ export function useSlideInteraction(
       return;
     }
 
+    dragged.current = true;
     cancelEdit();
     releaseDrag(event, activeDrag.pointer);
   }
@@ -225,6 +238,7 @@ export function useSlideInteraction(
 
   return {
     surface,
+    dragged,
     selected,
     setSelection,
     startMove,

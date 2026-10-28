@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DEVICE_LABELS } from '../constants/devices';
 import type { PreviewPanelProps } from '../types/components';
 import { useProject } from '../store/useProject';
 import { ResetPositionsDialog } from './ResetPositionsDialog';
 import { PreviewToolbar } from './PreviewToolbar';
+import { PreviewTextEditor } from './PreviewTextEditor';
+import type { SlideSelection } from '../types/interaction';
 import {
   SLIDE_ELEMENTS,
   ELEMENT_LABELS,
@@ -25,6 +27,12 @@ export function PreviewPanel({
 }: PreviewPanelProps) {
   const { resetPositions, undo, redo, past, future } = useProject();
   const [resetOpen, setResetOpen] = useState(false);
+  const [editing, setEditing] = useState<SlideSelection | null>(null);
+  const editingElement = editing?.slideId === slide.id ? editing.element : null;
+
+  useEffect(() => {
+    setEditing(null);
+  }, [slide.id]);
   const [zoom, setZoom] = useState(PREVIEW_DEFAULT_ZOOM);
   const { stage, size } = usePreviewSize(preset);
   const { ref, error, loading, ready } = usePreviewCanvas(
@@ -35,6 +43,7 @@ export function PreviewPanel({
   );
   const {
     surface,
+    dragged,
     selected,
     setSelection,
     startMove,
@@ -86,8 +95,12 @@ export function PreviewPanel({
         />
       )}
       <p className="sr-only" id="preview-move-help">
-        텍스트·기기 화면을 클릭하고 드래그하세요. 선택 후 방향키로 미세 이동 ·
-        Shift + 방향키로 빠르게 이동
+        텍스트를 클릭하면 문구를 수정할 수 있습니다. 텍스트·기기 화면을
+        드래그하거나 선택 후 방향키로 이동하세요. Shift + 방향키로 빠르게 이동
+      </p>
+      <p className="sr-only" id="preview-text-help">
+        Enter로 줄바꿈 · Ctrl 또는 Command + Enter로 완료 · Escape로 취소.
+        바깥을 클릭해도 수정 내용이 저장됩니다.
       </p>
       <div
         ref={stage}
@@ -148,17 +161,31 @@ export function PreviewPanel({
                       element +
                       (selected === element ? ' selected' : '')
                     }
-                    aria-label={ELEMENT_LABELS[element] + ' 이동'}
+                    aria-label={
+                      ELEMENT_LABELS[element] +
+                      (element === 'device' ? ' 이동' : ' 편집 및 이동')
+                    }
                     aria-pressed={selected === element}
                     aria-describedby="preview-move-help"
                     disabled={disabled}
                     style={{
+                      visibility:
+                        editingElement === element ? 'hidden' : undefined,
                       left: (box.x / preset.width) * 100 + '%',
                       top: (box.y / preset.height) * 100 + '%',
                       width: (box.width / preset.width) * 100 + '%',
                       height: (box.height / preset.height) * 100 + '%',
                     }}
-                    onClick={() => setSelection({ slideId: slide.id, element })}
+                    onClick={(event) => {
+                      setSelection({ slideId: slide.id, element });
+                      const shouldEdit =
+                        element !== 'device' &&
+                        (event.detail === 0 || !dragged.current);
+
+                      if (shouldEdit) {
+                        setEditing({ slideId: slide.id, element });
+                      }
+                    }}
                     onFocus={() => setSelection({ slideId: slide.id, element })}
                     onPointerDown={(e) => startMove(e, element)}
                     onPointerMove={move}
@@ -171,6 +198,36 @@ export function PreviewPanel({
                   </button>
                 );
               })}
+            {!disabled &&
+              (editingElement === 'title' || editingElement === 'subtitle') && (
+                <PreviewTextEditor
+                  key={slide.id + ':' + editingElement}
+                  slide={slide}
+                  element={editingElement}
+                  design={design}
+                  onClose={() => setEditing(null)}
+                  style={{
+                    left: (boxes[editingElement].x / preset.width) * 100 + '%',
+                    top: (boxes[editingElement].y / preset.height) * 100 + '%',
+                    width:
+                      (boxes[editingElement].width / preset.width) * 100 + '%',
+                    height:
+                      (boxes[editingElement].height / preset.height) * 100 +
+                      '%',
+                    fontSize:
+                      size.width *
+                      zoom *
+                      (editingElement === 'title'
+                        ? boxes.landscape
+                          ? 0.041
+                          : 0.075
+                        : boxes.landscape
+                          ? 0.018
+                          : 0.033),
+                    textAlign: boxes.landscape ? 'left' : 'center',
+                  }}
+                />
+              )}
           </div>
         </div>
         {loading && !ready && (

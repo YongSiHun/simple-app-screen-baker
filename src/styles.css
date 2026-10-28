@@ -1713,3 +1713,15 @@ select {
   font-size: 11px;
   text-align: center;
 }
+
+.preview-text-editor {
+  position: absolute;
+  z-index: 3;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: 2px solid #2563eb;
+  outline-offset: 0;
+  resize: none;
+  line-height: 1.25;
+}
