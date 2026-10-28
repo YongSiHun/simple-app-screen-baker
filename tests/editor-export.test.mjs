@@ -1,6 +1,7 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import JSZip from 'jszip';
+import { pngFile } from './helpers/images.mjs';
 import { useProject } from '../src/features/editor/store/useProject.ts';
 import {
   loadImage,
@@ -136,9 +137,7 @@ it('exports only the current device with flat consecutive ZIP names and preserve
   };
 
   try {
-    const id = await loadImage(
-      new File(['image'], 'phone.png', { type: 'image/png' }),
-    );
+    const id = await loadImage(await pngFile('phone.png', 100, 200));
     initial.attach([id], 'phone');
     initial.text(initial.selectedId, {
       title: '편집한 제목',

@@ -1,39 +1,27 @@
 # Simple App Screen Baker
 
-앱 스크린샷을 가장 간단하게.
+## 개요
 
-앱 화면과 소개 문구로 App Store·Google Play용 이미지를 만드는 무료 웹 도구.
-템플릿 편집, PNG·ZIP 다운로드 지원. 이미지 처리는 브라우저 안에서 진행하며, 작업 내용은 현재 탭에만 유지.
+앱 SS → App Store·Google Play용 PNG/ZIP 생성. 브라우저 내 편집·처리.
 
-## 실행
+## 스택
 
-Node.js 22.12 이상, Yarn 1.22.22 필요.
+React 19 · TS 5.9 · Vite 7 · Zustand 5 · TW CSS 4 · JSZip · CF Workers
 
-```sh
-yarn install
-yarn start
-```
+Node.js ≥22.12 · Yarn 1.22.22
 
-접속: http://localhost:5173
-
-## 빌드
+## 명령어
 
 ```sh
-yarn build
+yarn install --frozen-lockfile # 설치
+yarn start                     # 개발
+yarn typecheck                 # 타입 검사
+yarn lint                      # 린트
+yarn lint:fix                  # 린트 수정
+yarn format                    # 포맷
+yarn format:check              # 포맷 검사
+yarn test                      # 테스트
+yarn build                     # 빌드
+yarn preview                   # 빌드 후 로컬 미리보기
+yarn deploy                    # 배포
 ```
-
-출력: `dist/`
-
-Workers 로컬 미리보기: 빌드 후 `yarn preview` → http://localhost:8787
-
-## 코드 정리와 검사
-
-```sh
-yarn format
-yarn format:check
-yarn lint
-yarn lint:fix
-yarn test
-```
-
-조건문과 반복문은 중괄호를 사용하고, `if` 조건은 이름 있는 boolean 변수로 분리합니다. 조기 반환과 제어문 앞뒤 줄바꿈도 린트로 검사합니다.

@@ -1,11 +1,10 @@
 import { create } from 'zustand';
-import type {
-  ProjectDesign,
-  Slide,
-  DeviceKind,
-  SlideElement,
-  ElementPosition,
-} from '../types/project';
+import {
+  DEFAULT_PROJECT_NAME,
+  DEFAULT_PRESET_ID,
+  DEFAULT_DESIGN,
+} from '../constants/defaults.ts';
+import type { ProjectState } from '../types/store';
 import { releaseUnused } from '../services/images.ts';
 import * as changes from '../utils/projectChanges.ts';
 import {
@@ -17,32 +16,8 @@ import {
   undoHistoryEdit,
   redoHistoryEdit,
 } from './projectHistory.ts';
-import type { ProjectHistory, ProjectSnapshot } from './projectHistory';
+import type { ProjectHistory, ProjectSnapshot } from '../types/history';
 export { usedImageIds } from './projectHistory.ts';
-interface State extends ProjectHistory {
-  presetId: string;
-  beginEdit: () => void;
-  endEdit: () => void;
-  cancelEdit: () => void;
-  undo: () => void;
-  redo: () => void;
-  resetPositions: (id: string) => void;
-  collectImages: () => void;
-  select: (id: string) => void;
-  setPreset: (id: string) => void;
-  design: (patch: Partial<ProjectDesign>) => void;
-  text: (id: string, patch: Partial<Pick<Slide, 'title' | 'subtitle'>>) => void;
-  position: (
-    id: string,
-    element: SlideElement,
-    position?: ElementPosition,
-  ) => void;
-  add: () => void;
-  attach: (ids: string[], kind: DeviceKind) => void;
-  remove: (id: string) => void;
-  duplicate: (id: string) => void;
-  move: (id: string, delta: number) => void;
-}
 /**
  * 현재 프로젝트와 편집 이력에서 사용하지 않는 이미지를 해제합니다.
  */
@@ -54,11 +29,13 @@ const first = changes.createSlide();
 /**
  * 프로젝트 편집 상태와 실행 취소 가능한 변경 작업을 제공합니다.
  */
-export const useProject = create<State>((set, get) => {
+export const useProject = create<ProjectState>((set, get) => {
   /**
    * 편집 이력을 갱신하고 이미지 참조를 정리합니다.
    */
-  const updateHistory = (update: (state: State) => Partial<ProjectHistory>) =>
+  const updateHistory = (
+    update: (state: ProjectState) => Partial<ProjectHistory>,
+  ) =>
     set((state) => {
       const patch = update(state);
       collect({ ...state, ...patch });
@@ -68,26 +45,18 @@ export const useProject = create<State>((set, get) => {
   /**
    * 프로젝트 변경을 실행 취소 가능한 작업으로 적용합니다.
    */
-  const commit = (update: (state: State) => Partial<ProjectSnapshot>) =>
+  const commit = (update: (state: ProjectState) => Partial<ProjectSnapshot>) =>
     updateHistory((state) => recordHistoryChange(state, update(state)));
 
   return {
     project: {
       id: crypto.randomUUID(),
-      name: '나의 첫 프로젝트',
-      design: {
-        template: 'top',
-        background: '#EAF0FF',
-        textColor: '#0F172A',
-        font: 'Pretendard',
-        weight: 800,
-        frame: 'auto',
-        frameColor: '#111827',
-      },
+      name: DEFAULT_PROJECT_NAME,
+      design: { ...DEFAULT_DESIGN },
       slides: [first],
     },
     selectedId: first.id,
-    presetId: 'iphone',
+    presetId: DEFAULT_PRESET_ID,
     past: [],
     future: [],
     transaction: null,

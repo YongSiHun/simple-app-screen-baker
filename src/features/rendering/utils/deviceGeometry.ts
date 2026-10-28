@@ -6,23 +6,8 @@ import type {
 import { resolveFrame } from './frame.ts';
 import { contain, layout } from './layout.ts';
 
-const COMMON_ASPECT_RATIOS = [
-  [1, 1],
-  [3, 4],
-  [4, 3],
-  [9, 16],
-  [16, 9],
-  [16, 10],
-  [10, 16],
-  [9, 19.5],
-  [19.5, 9],
-  [9, 20],
-  [20, 9],
-  [2, 3],
-  [3, 2],
-  [9, 21],
-  [21, 9],
-];
+import { COMMON_ASPECT_RATIOS } from '../constants/devices.ts';
+import type { ImageSize } from '../../../core/types/images';
 
 /**
  * 스마트폰·태블릿·PC에 맞는 원본 화면 비율을 선택합니다.
@@ -79,10 +64,7 @@ export function deviceGeometry(
 /**
  * 확대 없이 표시하는 데 필요한 원본 이미지 크기를 계산합니다.
  */
-export function recommendedImageSize(
-  screen: { width: number; height: number },
-  source?: { width: number; height: number },
-) {
+export function recommendedImageSize(screen: ImageSize, source?: ImageSize) {
   const fitted = source
     ? contain(source.width, source.height, { x: 0, y: 0, ...screen })
     : screen;

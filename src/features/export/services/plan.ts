@@ -1,4 +1,5 @@
 import type { OutputPreset, Slide } from '../../editor/types/project';
+import type { ExportJob, ExportPlan } from '../types/plan';
 import { resolveSlideImage } from '../../editor/utils/resolveSlideImage.ts';
 
 /**
@@ -8,8 +9,8 @@ export function createExportPlan(
   slides: Slide[],
   presets: OutputPreset[],
   hasImage: (id: string | undefined) => boolean = (id) => Boolean(id),
-) {
-  const jobs: { preset: OutputPreset; slide: Slide; index: number }[] = [];
+): ExportPlan {
+  const jobs: ExportJob[] = [];
   const availability = presets.map((preset) => {
     let available = 0;
     let reused = 0;

@@ -1,3 +1,4 @@
+import { PAGE_TITLES } from './constants/pages';
 import {
   createBrowserRouter,
   Link,
@@ -20,15 +21,9 @@ function Root() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
-    const names: Record<string, string> = {
-      '/': '스크린샷 에디터',
-      '/editor': '스크린샷 에디터',
-      '/guide': '사용 가이드',
-      '/privacy': '개인정보처리방침',
-      '/terms': '이용약관',
-    };
+
     document.title =
-      (names[pathname] ?? '앱 스크린샷을 가장 간단하게') +
+      (PAGE_TITLES[pathname] ?? '앱 스크린샷을 가장 간단하게') +
       ' | Simple App Screen Baker';
   }, [pathname]);
 

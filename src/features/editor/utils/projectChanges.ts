@@ -1,3 +1,7 @@
+import {
+  DEFAULT_SLIDE_TITLE,
+  DEFAULT_SLIDE_SUBTITLE,
+} from '../constants/defaults.ts';
 import type {
   Project,
   ProjectDesign,
@@ -6,7 +10,7 @@ import type {
   SlideElement,
   ElementPosition,
 } from '../types/project';
-import type { ProjectSnapshot } from '../store/projectHistory';
+import type { ProjectSnapshot } from '../types/history';
 
 /**
  * 기본 문구를 가진 빈 슬라이드를 생성합니다.
@@ -14,8 +18,8 @@ import type { ProjectSnapshot } from '../store/projectHistory';
 export function createSlide(): Slide {
   return {
     id: crypto.randomUUID(),
-    title: '앱의 매력을\n한눈에 보여주세요',
-    subtitle: '당신의 아이디어가 더 빛날 수 있도록.',
+    title: DEFAULT_SLIDE_TITLE,
+    subtitle: DEFAULT_SLIDE_SUBTITLE,
     images: {},
   };
 }
@@ -185,21 +189,28 @@ export function attachScreenshots(
   ids: string[],
   kind: DeviceKind,
 ): Partial<ProjectSnapshot> {
-  const slides = state.project.slides.map((slide) => ({
-    ...slide,
-    images: { ...slide.images },
-  }));
+  const hasNoImages = ids.length === 0;
+
+  if (hasNoImages) {
+    return {};
+  }
+
+  const slides = [...state.project.slides];
   ids.forEach((imageId, index) => {
     const isFirstImage = index === 0;
 
     if (isFirstImage) {
-      const selectedSlide = slides.find(
+      const selectedIndex = slides.findIndex(
         (slide) => slide.id === state.selectedId,
       );
-      const hasSelectedSlide = selectedSlide !== undefined;
+      const hasSelectedSlide = selectedIndex >= 0;
 
       if (hasSelectedSlide) {
-        selectedSlide.images[kind] = imageId;
+        const selectedSlide = slides[selectedIndex];
+        slides[selectedIndex] = {
+          ...selectedSlide,
+          images: { ...selectedSlide.images, [kind]: imageId },
+        };
       }
 
       return;

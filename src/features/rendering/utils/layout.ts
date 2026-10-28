@@ -1,15 +1,10 @@
+import type { Rect } from '../types/layout';
 import type {
   DeviceKind,
   TemplateId,
   ElementPosition,
   Slide,
 } from '../../editor/types/project';
-export interface Rect {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
 /**
  * 원본 비율을 유지하며 지정한 사각형 안에 맞춥니다.
  */
@@ -28,45 +23,45 @@ export function contain(
   };
 }
 
-/**
- * 템플릿과 출력 방향에 맞는 기본 배치를 계산합니다.
- */
-function baseLayout(
+/** Build the horizontal layout with one shared text-column position. */
+function landscapeLayout(width: number, height: number, template: TemplateId) {
+  const reverse = template === 'center';
+  const pad = width * 0.075;
+  const textX = reverse ? width * 0.59 : pad;
+  const deviceX = reverse ? pad : width * 0.51;
+
+  return {
+    title: {
+      x: textX,
+      y: height * 0.26,
+      width: width * 0.34,
+      height: height * 0.29,
+    },
+    subtitle: {
+      x: textX,
+      y: height * 0.58,
+      width: width * 0.34,
+      height: height * 0.17,
+    },
+    device: {
+      x: deviceX,
+      y: height * 0.1,
+      width: width * 0.41,
+      height: height * 0.76,
+    },
+    landscape: true,
+  };
+}
+
+/** Build the vertical layout independently of horizontal placement. */
+function portraitLayout(
   width: number,
   height: number,
   template: TemplateId,
   device: DeviceKind,
 ) {
-  const landscape = width > height;
-  const pad = width * 0.075;
-
-  if (landscape) {
-    const reverse = template === 'center';
-
-    return {
-      title: {
-        x: reverse ? width * 0.59 : pad,
-        y: height * 0.26,
-        width: width * 0.34,
-        height: height * 0.29,
-      },
-      subtitle: {
-        x: reverse ? width * 0.59 : pad,
-        y: height * 0.58,
-        width: width * 0.34,
-        height: height * 0.17,
-      },
-      device: {
-        x: reverse ? pad : width * 0.51,
-        y: height * 0.1,
-        width: width * 0.41,
-        height: height * 0.76,
-      },
-      landscape,
-    };
-  }
-
   const below = template === 'center';
+  const pad = width * 0.075;
 
   return {
     title: {
@@ -87,7 +82,7 @@ function baseLayout(
       width: width - pad * 2,
       height: height * (below ? 0.64 : 0.61),
     },
-    landscape,
+    landscape: false,
     deviceKind: device,
   };
 }
@@ -142,7 +137,10 @@ export function layout(
   device: DeviceKind,
   positions?: Slide['positions'],
 ) {
-  const base = baseLayout(width, height, template, device);
+  const landscape = width > height;
+  const base = landscape
+    ? landscapeLayout(width, height, template)
+    : portraitLayout(width, height, template, device);
 
   return {
     ...base,
@@ -172,9 +170,10 @@ export function wrapText(
       if (shouldWrapLine) {
         lines.push(line.trimEnd());
         line = char.trimStart();
-      } else {
-        line = next;
+        continue;
       }
+
+      line = next;
     }
 
     lines.push(line.trimEnd());

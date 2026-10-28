@@ -1,5 +1,6 @@
 import { afterEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { pngFile } from './helpers/images.mjs';
 import { useProject } from '../src/features/editor/store/useProject.ts';
 import {
   getImage,
@@ -151,13 +152,9 @@ describe('undo and redo', () => {
     };
 
     try {
-      const a = await loadImage(
-        new File(['a'], 'a.png', { type: 'image/png' }),
-      );
+      const a = await loadImage(await pngFile('a.png'));
       state().attach([a], 'phone');
-      const b = await loadImage(
-        new File(['b'], 'b.png', { type: 'image/png' }),
-      );
+      const b = await loadImage(await pngFile('b.png'));
       state().attach([b], 'phone');
       state().collectImages();
       assert.ok(getImage(a));

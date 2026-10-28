@@ -4,7 +4,8 @@ import type {
   Slide,
 } from '../../editor/types/project';
 import { drawDevice } from './drawDevice.ts';
-import { fitText, type Rect } from '../utils/layout.ts';
+import { fitText } from '../utils/layout.ts';
+import type { Rect } from '../types/layout';
 let fontPromise: Promise<void> | undefined;
 /**
  * 렌더링에 필요한 글꼴을 한 번만 읽고 준비 상태를 확인합니다.
@@ -73,8 +74,11 @@ export async function render(
   slide: Slide,
   preview = false,
   previewZoom = 1,
+  signal?: AbortSignal,
 ) {
+  signal?.throwIfAborted();
   await ensureFont();
+  signal?.throwIfAborted();
   const scale = preview
     ? Math.min(1, (1000 * previewZoom) / Math.max(preset.width, preset.height))
     : 1;

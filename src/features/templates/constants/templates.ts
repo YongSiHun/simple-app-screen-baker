@@ -1,9 +1,5 @@
-import type { TemplateId } from '../../editor/types/project';
-export const TEMPLATES: {
-  id: TemplateId;
-  name: string;
-  description: string;
-}[] = [
+import type { Template } from '../types/template';
+export const TEMPLATES: Template[] = [
   {
     id: 'top',
     name: 'Top Headline',

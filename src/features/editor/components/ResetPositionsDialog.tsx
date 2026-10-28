@@ -1,14 +1,12 @@
 import { useLayoutEffect, useRef } from 'react';
+import type { ResetPositionsDialogProps } from '../types/components';
 /**
  * 전체 위치 초기화 여부를 확인합니다.
  */
 export function ResetPositionsDialog({
   onConfirm,
   onClose,
-}: {
-  onConfirm: () => void;
-  onClose: () => void;
-}) {
+}: ResetPositionsDialogProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   useLayoutEffect(() => {
     const element = dialog.current;

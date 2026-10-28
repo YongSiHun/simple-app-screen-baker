@@ -1,10 +1,4 @@
-interface EditorStatusProps {
-  hasExportableSlides: boolean;
-  missing: number;
-  progress: string;
-  done: string;
-  error: string;
-}
+import type { EditorStatusProps } from '../types/components';
 /**
  * 편집 주의사항과 다운로드 진행 상태를 표시합니다.
  */

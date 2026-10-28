@@ -1,8 +1,7 @@
-import JSZip from 'jszip';
 import type { OutputPreset, Project, Slide } from '../../editor/types/project';
 import { getImage, getSlideImage } from '../../editor/services/images.ts';
 import { render } from '../../rendering/services/render.ts';
-import { validatePreset } from '../constants/presets.ts';
+import { validatePreset } from '../utils/validatePreset.ts';
 import { encodeRgb } from './png.ts';
 import { createExportPlan } from './plan.ts';
 /**
@@ -78,6 +77,7 @@ export async function exportZip(
     throw new Error('현재 기기에 사용할 스크린샷을 업로드해주세요.');
   }
 
+  const { default: JSZip } = await import('jszip');
   const zip = new JSZip();
 
   for (let i = 0; i < jobs.length; i++) {
@@ -91,7 +91,7 @@ export async function exportZip(
   progress('ZIP 파일 묶는 중');
   const blob = await zip.generateAsync(
     { type: 'blob', compression: 'STORE' },
-    (m: { percent: number }) => progress('ZIP ' + Math.round(m.percent) + '%'),
+    (m) => progress('ZIP ' + Math.round(m.percent) + '%'),
   );
   save(blob, 'screenbaker-' + preset.folder + '.zip');
 

@@ -1,7 +1,9 @@
+import { BACKGROUND_SWATCHES } from '../constants/defaults';
 import { useProject } from '../store/useProject';
-import type { DeviceKind, ProjectDesign } from '../types/project';
-import { TEMPLATES } from '../../templates/definitions/templates';
+import type { ProjectDesign } from '../types/project';
+import { TEMPLATES } from '../../templates/constants/templates';
 import { DEVICE_LABELS as labels } from '../constants/devices';
+import type { DeviceKindProps } from '../types/components';
 /**
  * 프로젝트에 적용할 템플릿을 선택합니다.
  */
@@ -83,7 +85,7 @@ export function TextSettings() {
 /**
  * 색상·글꼴·기기 프레임 설정을 표시합니다.
  */
-export function StyleSettings({ kind }: { kind: DeviceKind }) {
+export function StyleSettings({ kind }: DeviceKindProps) {
   const { project, design } = useProject();
   const currentDesign = project.design;
 
@@ -119,17 +121,15 @@ export function StyleSettings({ kind }: { kind: DeviceKind }) {
         </label>
       </div>
       <div className="swatches">
-        {['#EAF0FF', '#F8FAFC', '#FFF4DE', '#DCF3EC', '#0F172A'].map(
-          (color) => (
-            <button
-              key={color}
-              style={{ background: color }}
-              aria-label={'배경색 ' + color}
-              aria-pressed={currentDesign.background === color}
-              onClick={() => design({ background: color })}
-            />
-          ),
-        )}
+        {BACKGROUND_SWATCHES.map((color) => (
+          <button
+            key={color}
+            style={{ background: color }}
+            aria-label={'배경색 ' + color}
+            aria-pressed={currentDesign.background === color}
+            onClick={() => design({ background: color })}
+          />
+        ))}
       </div>
       <div className="two-fields">
         <label className="field">

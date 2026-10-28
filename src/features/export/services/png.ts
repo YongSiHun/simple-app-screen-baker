@@ -1,15 +1,6 @@
-const PNG_SIGNATURE = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
-const PNG_CHUNK = { header: 0x49484452, image: 0x49444154, end: 0x49454e44 };
-
-const crcTable = Uint32Array.from({ length: 256 }, (_, value) => {
-  let checksum = value;
-
-  for (let bit = 0; bit < 8; bit++) {
-    checksum = checksum & 1 ? 0xedb88320 ^ (checksum >>> 1) : checksum >>> 1;
-  }
-
-  return checksum >>> 0;
-});
+import { PNG_SIGNATURE } from '../../../core/constants/imageFormats.ts';
+import { PNG_CHUNK, CRC_TABLE } from '../constants/png.ts';
+import type { RgbaPixels } from '../types/png';
 
 /**
  * PNG 청크 검증에 사용하는 CRC-32 체크섬을 계산합니다.
@@ -18,7 +9,7 @@ export function crc32(bytes: Uint8Array) {
   let checksum = 0xffffffff;
 
   for (const byte of bytes) {
-    checksum = crcTable[(checksum ^ byte) & 255] ^ (checksum >>> 8);
+    checksum = CRC_TABLE[(checksum ^ byte) & 255] ^ (checksum >>> 8);
   }
 
   return (checksum ^ 0xffffffff) >>> 0;
@@ -44,11 +35,7 @@ function chunk(type: string, data: Uint8Array) {
 /**
  * 불투명 RGBA 픽셀을 PNG용 RGB 스캔라인으로 변환합니다.
  */
-function createRgbScanlines(
-  width: number,
-  height: number,
-  rgba: Uint8ClampedArray | Uint8Array,
-) {
+function createRgbScanlines(width: number, height: number, rgba: RgbaPixels) {
   const hasInvalidPixels =
     !Number.isInteger(width) ||
     !Number.isInteger(height) ||
@@ -138,7 +125,7 @@ function combineChunks(chunks: Uint8Array[]) {
 export async function encodeRgb(
   width: number,
   height: number,
-  rgba: Uint8ClampedArray | Uint8Array,
+  rgba: RgbaPixels,
 ) {
   const raw = createRgbScanlines(width, height, rgba);
   const compressed = await compressScanlines(raw);

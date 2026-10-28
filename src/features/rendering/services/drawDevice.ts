@@ -5,8 +5,9 @@ import type {
 } from '../../editor/types/project';
 import { getSlideImage } from '../../editor/services/images.ts';
 import { deviceGeometry } from '../utils/deviceGeometry.ts';
-import { contain, type Rect } from '../utils/layout.ts';
-type DeviceGeometry = ReturnType<typeof deviceGeometry>;
+import { contain } from '../utils/layout.ts';
+import type { Rect } from '../types/layout';
+import type { DeviceGeometry } from '../types/deviceGeometry';
 /**
  * 지정한 색상으로 둥근 사각형을 그립니다.
  */

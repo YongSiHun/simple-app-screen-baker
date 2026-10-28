@@ -1,25 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { DeviceKind } from '../types/project';
 import { useProject } from '../store/useProject';
-import { loadImage } from '../services/images';
-/**
- * 선택한 파일을 차례로 읽고 성공한 이미지와 오류를 모읍니다.
- */
-async function readScreenshots(files: File[]) {
-  const ids: string[] = [];
-  const errors: string[] = [];
-
-  for (const file of files) {
-    try {
-      ids.push(await loadImage(file));
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : '업로드 오류');
-    }
-  }
-
-  return { ids, errors };
-}
-
+import { readScreenshots } from '../services/readScreenshots.ts';
+import { MAX_UPLOAD_FILES } from '../constants/images.ts';
 /**
  * 업로드 입력과 드래그·진행·오류 상태를 관리합니다.
  */
@@ -32,22 +15,44 @@ export function useScreenshotUpload(
   const [drag, setDrag] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const uploadController = useRef<AbortController | null>(null);
+  useEffect(() => () => uploadController.current?.abort(), []);
   /**
    * 이미지를 슬라이드에 연결하고 업로드 리소스를 정리합니다.
    */
   async function upload(files: FileList | null) {
-    const shouldSkipUpload = files === null || busy;
+    const shouldSkipUpload =
+      files === null || uploadController.current !== null;
 
     if (shouldSkipUpload) {
       return;
     }
 
+    const exceedsBatchLimit = files.length > MAX_UPLOAD_FILES;
+
+    if (exceedsBatchLimit) {
+      setError('한 번에 최대 20장까지 업로드할 수 있습니다.');
+
+      return;
+    }
+
+    const controller = new AbortController();
+    uploadController.current = controller;
     setBusy(true);
     onUploading(true);
     setError('');
 
     try {
-      const { ids, errors } = await readScreenshots(Array.from(files));
+      const { ids, errors } = await readScreenshots(
+        Array.from(files),
+        controller.signal,
+      );
+      const isCancelled = controller.signal.aborted;
+
+      if (isCancelled) {
+        return;
+      }
+
       const hasUploadedImages = ids.length > 0;
       const hasUploadErrors = errors.length > 0;
 
@@ -60,8 +65,14 @@ export function useScreenshotUpload(
       }
     } finally {
       useProject.getState().collectImages();
-      setBusy(false);
-      onUploading(false);
+      uploadController.current = null;
+      const isActive = !controller.signal.aborted;
+
+      if (isActive) {
+        setBusy(false);
+        onUploading(false);
+      }
+
       const inputElement = input.current;
       const hasInput = inputElement !== null;
 

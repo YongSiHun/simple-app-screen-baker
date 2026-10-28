@@ -1,4 +1,5 @@
-import type { DeviceKind, OutputPreset } from '../types/project';
+import type { DeviceKind } from '../types/project';
+import type { ScreenshotUploadProps } from '../types/components';
 import { useProject } from '../store/useProject';
 import { getSlideImage } from '../services/images';
 import { Icon } from '../../../core/components/Icons';
@@ -40,11 +41,7 @@ export function ScreenshotUpload({
   kind,
   preset,
   onUploading,
-}: {
-  kind: DeviceKind;
-  preset: OutputPreset;
-  onUploading: (busy: boolean) => void;
-}) {
+}: ScreenshotUploadProps) {
   const { project, selectedId } = useProject();
   const slide = project.slides.find((slide) => slide.id === selectedId)!;
   const image = getSlideImage(slide, kind);
@@ -100,7 +97,7 @@ export function ScreenshotUpload({
             </small>
           )}
         </span>
-        <small>PNG, JPEG, WebP · 파일당 최대 25MB</small>
+        <small>PNG, JPEG, WebP · 파일당 최대 25MB · 한 번에 20장</small>
         <em>{uploadHint(image, kind)}</em>
       </button>
       <input

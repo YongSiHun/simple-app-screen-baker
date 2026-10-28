@@ -1,8 +1,8 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { OutputPreset, ProjectDesign, Slide } from '../types/project';
 import { render } from '../../rendering/services/render';
 /**
- * 현재 슬라이드를 캔버스에 그리고 오래된 렌더링 결과는 무시합니다.
+ * Coalesce rapid edits into one frame and discard cancelled canvas work.
  */
 export function usePreviewCanvas(
   preset: OutputPreset,
@@ -14,7 +14,7 @@ export function usePreviewCanvas(
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [ready, setReady] = useState(false);
-  useLayoutEffect(() => {
+  useEffect(() => {
     const canvas = ref.current;
     const hasNoCanvas = !canvas;
 
@@ -22,37 +22,48 @@ export function usePreviewCanvas(
       return;
     }
 
-    setLoading(true);
-    setError('');
-    let active = true;
-    const buffer = document.createElement('canvas');
-    render(buffer, preset, design, slide, true, zoom)
-      .then(() => {
-        const isStaleRender = !active || ref.current !== canvas;
+    const controller = new AbortController();
+    const frame = requestAnimationFrame(() => {
+      setLoading(true);
+      setError('');
+      const buffer = document.createElement('canvas');
+      render(buffer, preset, design, slide, true, zoom, controller.signal)
+        .then(() => {
+          const isStaleRender =
+            controller.signal.aborted || ref.current !== canvas;
 
-        if (isStaleRender) {
-          return;
-        }
+          if (isStaleRender) {
+            return;
+          }
 
-        canvas.width = buffer.width;
-        canvas.height = buffer.height;
-        canvas.getContext('2d')?.drawImage(buffer, 0, 0);
-        setLoading(false);
-        setReady(true);
-      })
-      .catch((e: unknown) => {
-        const isStaleRender = !active || ref.current !== canvas;
+          canvas.width = buffer.width;
+          canvas.height = buffer.height;
+          canvas.getContext('2d')?.drawImage(buffer, 0, 0);
+          setLoading(false);
+          setReady(true);
+        })
+        .catch((error: unknown) => {
+          const isStaleRender =
+            controller.signal.aborted || ref.current !== canvas;
 
-        if (isStaleRender) {
-          return;
-        }
+          if (isStaleRender) {
+            return;
+          }
 
-        setError(e instanceof Error ? e.message : '미리보기 생성 오류');
-        setLoading(false);
-      });
+          setError(
+            error instanceof Error ? error.message : '미리보기 생성 오류',
+          );
+          setLoading(false);
+        })
+        .finally(() => {
+          buffer.width = 1;
+          buffer.height = 1;
+        });
+    });
 
     return () => {
-      active = false;
+      controller.abort();
+      cancelAnimationFrame(frame);
     };
   }, [preset, design, slide, zoom]);
 

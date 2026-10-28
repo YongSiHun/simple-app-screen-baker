@@ -5,11 +5,12 @@ import type {
   ProjectDesign,
   Slide,
   SlideElement,
-  ElementPosition,
 } from '../types/project';
 import { useProject } from '../store/useProject';
 import { layout, movePosition } from '../../rendering/utils/layout';
 import { resolveFrame } from '../../rendering/utils/frame';
+import { ARROW_DIRECTIONS } from '../constants/preview.ts';
+import type { SlideDragState, SlideSelection } from '../types/interaction';
 /**
  * 컴포넌트 선택과 포인터·키보드 이동을 관리합니다.
  */
@@ -20,20 +21,9 @@ export function useSlideInteraction(
   disabled: boolean,
 ) {
   const surface = useRef<HTMLDivElement>(null);
-  const drag = useRef<{
-    element: SlideElement;
-    pointer: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    original?: ElementPosition;
-  } | null>(null);
+  const drag = useRef<SlideDragState | null>(null);
   const { position, beginEdit, endEdit, cancelEdit } = useProject();
-  const [selection, setSelection] = useState<{
-    slideId: string;
-    element: SlideElement;
-  } | null>(null);
+  const [selection, setSelection] = useState<SlideSelection | null>(null);
   const selected = selection?.slideId === slide.id ? selection.element : null;
   const frame = resolveFrame(design.frame, preset.device);
   const base = layout(preset.width, preset.height, design.template, frame);
@@ -162,13 +152,7 @@ export function useSlideInteraction(
     event: KeyboardEvent<HTMLButtonElement>,
     element: SlideElement,
   ) {
-    const direction: Record<string, [number, number]> = {
-      ArrowLeft: [-1, 0],
-      ArrowRight: [1, 0],
-      ArrowUp: [0, -1],
-      ArrowDown: [0, 1],
-    };
-    const delta = direction[event.key];
+    const delta = ARROW_DIRECTIONS[event.key];
     const hasNoDirection = delta === undefined;
 
     if (hasNoDirection) {

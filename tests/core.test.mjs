@@ -11,10 +11,8 @@ import {
   wrapText,
   fitText,
 } from '../src/features/rendering/utils/layout.ts';
-import {
-  PRESETS,
-  validatePreset,
-} from '../src/features/export/constants/presets.ts';
+import { PRESETS } from '../src/features/export/constants/presets.ts';
+import { validatePreset } from '../src/features/export/utils/validatePreset.ts';
 import {
   encodeRgb,
   verifyPng,

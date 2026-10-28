@@ -7,9 +7,9 @@ export default defineConfig({
   server: {
     hmr: true,
     watch: {
-      // Windows 및 공유 폴더에서도 파일 변경을 안정적으로 감지한다.
-      usePolling: true,
-      interval: 100,
+      // Enable polling only for file systems that cannot deliver change events.
+      usePolling: process.env.VITE_USE_POLLING === 'true',
+      interval: 300,
     },
   },
 });

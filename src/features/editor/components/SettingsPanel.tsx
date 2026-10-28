@@ -1,15 +1,10 @@
-import type { DeviceKind, OutputPreset } from '../types/project';
 import { ScreenshotUpload } from './ScreenshotUpload';
 import {
   TemplateSettings,
   TextSettings,
   StyleSettings,
 } from './SettingsSections';
-interface SettingsPanelProps {
-  kind: DeviceKind;
-  preset: OutputPreset;
-  onUploading: (busy: boolean) => void;
-}
+import type { SettingsPanelProps } from '../types/components';
 /**
  * 업로드·템플릿·문구·스타일 설정을 구성합니다.
  */

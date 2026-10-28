@@ -1,16 +1,12 @@
+import type { HistoryKeyEvent, HistoryCommand } from '../types/interaction';
+
 /**
  * 키 입력을 실행 취소·다시 실행 명령으로 해석합니다.
  */
 export function historyShortcut(
-  event: {
-    key: string;
-    ctrlKey: boolean;
-    metaKey: boolean;
-    shiftKey: boolean;
-    altKey: boolean;
-  },
+  event: HistoryKeyEvent,
   editingText: boolean,
-): 'undo' | 'redo' | null {
+): HistoryCommand {
   const shouldIgnoreShortcut =
     editingText || event.altKey || (!event.ctrlKey && !event.metaKey);
 

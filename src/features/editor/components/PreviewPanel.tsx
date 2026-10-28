@@ -1,8 +1,14 @@
 import { useState } from 'react';
-import type { OutputPreset, ProjectDesign, Slide } from '../types/project';
+import { DEVICE_LABELS } from '../constants/devices';
+import type { PreviewPanelProps } from '../types/components';
 import { useProject } from '../store/useProject';
 import { ResetPositionsDialog } from './ResetPositionsDialog';
-import { PreviewToolbar, elements, labels } from './PreviewToolbar';
+import { PreviewToolbar } from './PreviewToolbar';
+import {
+  SLIDE_ELEMENTS,
+  ELEMENT_LABELS,
+  PREVIEW_DEFAULT_ZOOM,
+} from '../constants/preview';
 import { usePreviewSize } from '../hooks/usePreviewSize';
 import { usePreviewCanvas } from '../hooks/usePreviewCanvas';
 import { useSlideInteraction } from '../hooks/useSlideInteraction';
@@ -16,15 +22,10 @@ export function PreviewPanel({
   design,
   slide,
   disabled = false,
-}: {
-  preset: OutputPreset;
-  design: ProjectDesign;
-  slide: Slide;
-  disabled?: boolean;
-}) {
+}: PreviewPanelProps) {
   const { resetPositions, undo, redo, past, future } = useProject();
   const [resetOpen, setResetOpen] = useState(false);
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(PREVIEW_DEFAULT_ZOOM);
   const { stage, size } = usePreviewSize(preset);
   const { ref, error, loading, ready } = usePreviewCanvas(
     preset,
@@ -46,7 +47,7 @@ export function PreviewPanel({
     (value) => value && (value.x !== 0 || value.y !== 0),
   );
   const frame = resolveFrame(design.frame, preset.device);
-  const frameName = { phone: '스마트폰', tablet: '태블릿', pc: 'PC' }[frame];
+  const frameName = DEVICE_LABELS[frame];
   const boxes = layout(
     preset.width,
     preset.height,
@@ -135,7 +136,7 @@ export function PreviewPanel({
             />
             {ready &&
               !error &&
-              elements.map((element) => {
+              SLIDE_ELEMENTS.map((element) => {
                 const box = boxes[element];
 
                 return (
@@ -147,7 +148,7 @@ export function PreviewPanel({
                       element +
                       (selected === element ? ' selected' : '')
                     }
-                    aria-label={labels[element] + ' 이동'}
+                    aria-label={ELEMENT_LABELS[element] + ' 이동'}
                     aria-pressed={selected === element}
                     aria-describedby="preview-move-help"
                     disabled={disabled}
@@ -166,7 +167,7 @@ export function PreviewPanel({
                     onLostPointerCapture={finishDrag}
                     onKeyDown={(e) => keyMove(e, element)}
                   >
-                    <span aria-hidden="true">{labels[element]}</span>
+                    <span aria-hidden="true">{ELEMENT_LABELS[element]}</span>
                   </button>
                 );
               })}

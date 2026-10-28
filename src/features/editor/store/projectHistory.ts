@@ -1,14 +1,6 @@
 import type { Project } from '../types/project';
-export interface ProjectSnapshot {
-  project: Project;
-  selectedId: string;
-}
-export interface ProjectHistory extends ProjectSnapshot {
-  past: ProjectSnapshot[];
-  future: ProjectSnapshot[];
-  transaction: ProjectSnapshot | null;
-}
-const HISTORY_LIMIT = 50;
+import type { ProjectSnapshot, ProjectHistory } from '../types/history';
+import { HISTORY_LIMIT } from '../constants/history.ts';
 /**
  * 실행 취소에 필요한 프로젝트와 선택 상태를 보관합니다.
  */
@@ -23,29 +15,40 @@ function appendSnapshot(history: ProjectSnapshot[], entry: ProjectSnapshot) {
   return [...history, entry].slice(-HISTORY_LIMIT);
 }
 
+/** Add a project's image references without allocating flattened arrays. */
+function collectProjectImages(project: Project, used: Set<string>) {
+  for (const slide of project.slides) {
+    for (const id of Object.values(slide.images)) {
+      used.add(id);
+    }
+  }
+}
+
 /**
  * 현재 프로젝트와 복구 가능한 이력에서 사용하는 이미지를 모읍니다.
  */
 export function usedImageIds(
   state: Pick<ProjectHistory, 'project' | 'past' | 'future' | 'transaction'>,
 ) {
-  const projects = [
+  const projects = new Set([
     state.project,
     ...state.past.map((entry) => entry.project),
     ...state.future.map((entry) => entry.project),
-  ];
+  ]);
   const transaction = state.transaction;
   const hasTransaction = transaction !== null;
 
   if (hasTransaction) {
-    projects.push(transaction.project);
+    projects.add(transaction.project);
   }
 
-  return new Set(
-    projects.flatMap((project) =>
-      project.slides.flatMap((slide) => Object.values(slide.images)),
-    ),
-  );
+  const used = new Set<string>();
+
+  for (const project of projects) {
+    collectProjectImages(project, used);
+  }
+
+  return used;
 }
 
 /**
