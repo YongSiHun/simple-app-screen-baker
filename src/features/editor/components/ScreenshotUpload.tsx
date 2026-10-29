@@ -100,6 +100,10 @@ export function ScreenshotUpload({
         <small>PNG, JPEG, WebP · 파일당 최대 25MB · 한 번에 20장</small>
         <em>{uploadHint(image, kind)}</em>
       </button>
+      <p className="field-help">
+        선택한 기기 화면에 맞춰 자동 조정합니다. 원본 비율은 유지되며 넘치는
+        부분은 중앙 기준으로 잘립니다.
+      </p>
       <input
         ref={input}
         type="file"

@@ -5,7 +5,7 @@ import type {
 } from '../../editor/types/project';
 import { getSlideImage } from '../../editor/services/images.ts';
 import { deviceGeometry } from '../utils/deviceGeometry.ts';
-import { contain } from '../utils/layout.ts';
+import { cover } from '../utils/layout.ts';
 import type { Rect } from '../types/layout';
 import type { DeviceGeometry } from '../types/deviceGeometry';
 /**
@@ -58,7 +58,7 @@ function drawScreenContent(
   const hasImage = image !== undefined;
 
   if (hasImage) {
-    const box = contain(image.width, image.height, screen);
+    const box = cover(image.width, image.height, screen);
     ctx.drawImage(image, box.x, box.y, box.width, box.height);
 
     return;

@@ -24,6 +24,9 @@
   --font-sans: Pretendard, system-ui, sans-serif;
 }
 :root {
+  /* Desktop workspace; smaller viewports scroll instead of reflowing. */
+  --app-min-width: 1280px;
+  --app-min-height: 800px;
   font-family: Pretendard, system-ui, sans-serif;
   color: #0f172a;
   background: #fff;
@@ -35,7 +38,12 @@
 * {
   box-sizing: border-box;
 }
+html {
+  overflow-x: auto;
+}
 body {
+  min-width: var(--app-min-width);
+  min-height: var(--app-min-height);
   margin: 0;
 }
 button,
@@ -215,10 +223,12 @@ select {
   color: #94a3b8;
 }
 .editor {
-  min-height: 100vh;
+  min-height: max(100vh, var(--app-min-height));
   background: #f7f9fc;
 }
 .editor-header {
+  flex-wrap: nowrap;
+  white-space: nowrap;
   height: 77px;
   border-bottom: 1px solid #e2e8f0;
   background: #fff;
@@ -272,7 +282,7 @@ select {
   margin: 0;
   min-width: 0;
   display: grid;
-  grid-template-columns: 306px minmax(0, 1fr);
+  grid-template-columns: 306px minmax(898px, 1fr);
   align-items: start;
 }
 .settings-panel {
@@ -959,7 +969,7 @@ select {
 }
 @media (min-width: 1500px) {
   .editor-workspace {
-    grid-template-columns: 330px minmax(0, 1fr);
+    grid-template-columns: 330px minmax(898px, 1fr);
   }
   .settings-panel {
     padding: 25px 30px;
@@ -971,309 +981,7 @@ select {
     min-height: 550px;
   }
 }
-@media (max-width: 1100px) {
-  .editor-header {
-    gap: 12px;
-    padding: 0 18px;
-  }
-  .editor-guide {
-    display: none;
-  }
 
-  .editor-main {
-    padding: 24px;
-  }
-  .editor-workspace {
-    grid-template-columns: 285px minmax(0, 1fr);
-  }
-  .settings-panel {
-    padding: 22px 17px;
-  }
-  .preset-select select {
-    max-width: 245px;
-  }
-  .site-footer > small {
-    width: 100%;
-  }
-  .canvas-stage {
-    min-height: 460px;
-  }
-  .slides-heading > span {
-    display: none;
-  }
-}
-@media (max-width: 800px) {
-  .section {
-    padding-top: 56px;
-    padding-bottom: 56px;
-  }
-  .editor-header {
-    height: auto;
-    min-height: 78px;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 14px 18px;
-  }
-  .editor-header .brand {
-    margin-right: auto;
-  }
-
-  .preset-select {
-    order: 2;
-    flex: 1 0 100%;
-    max-width: none;
-  }
-  .preset-select select {
-    max-width: 100%;
-    width: 100%;
-    font-size: 10px;
-    padding: 7px;
-  }
-  .editor-note {
-    padding: 7px 18px;
-    justify-content: center;
-  }
-  .editor-workspace {
-    grid-template-columns: 245px minmax(0, 1fr);
-  }
-  .settings-panel {
-    padding: 20px 13px;
-  }
-  .editor-main {
-    padding: 20px 16px;
-  }
-  .workspace-title h1 {
-    font-size: 18px;
-  }
-  .workspace-title .section-kicker {
-    font-size: 6px;
-  }
-  .workspace-badge {
-    display: none;
-  }
-  .canvas-stage {
-    min-height: 420px;
-    height: 420px;
-    padding: 20px 13px;
-  }
-  .canvas-stage.wide {
-    height: 250px;
-    min-height: 250px;
-  }
-  .preview-toolbar,
-  .preview-caption {
-    padding: 10px;
-    font-size: 8px;
-  }
-  .template-diagram {
-    padding-left: 13px;
-    padding-right: 13px;
-  }
-  .template-options > button > span {
-    font-size: 6px;
-  }
-  .field-help {
-    font-size: 8px;
-  }
-  .color-input {
-    gap: 4px;
-    padding: 5px;
-  }
-  .color-input span {
-    font-size: 8px;
-  }
-  .color-input input {
-    width: 18px;
-    height: 18px;
-  }
-}
-@media (max-width: 560px) {
-  .shell {
-    padding-left: 22px;
-    padding-right: 22px;
-  }
-  .site-header {
-    height: 75px;
-  }
-  .nav-inner nav {
-    gap: 16px;
-  }
-  .nav-inner nav > a:first-child {
-    display: none;
-  }
-  .brand strong {
-    font-size: 16px;
-  }
-  .brand > span {
-    font-size: 10px;
-  }
-  .brand img {
-    width: 35px;
-    height: 35px;
-  }
-  .site-footer {
-    gap: 22px;
-  }
-  .footer-links {
-    width: 100%;
-    font-size: 10px;
-    gap: 20px;
-  }
-  .editor-header {
-    gap: 10px;
-  }
-  .editor-header .button {
-    font-size: 11px;
-    padding: 9px 12px;
-  }
-  .editor-header .brand strong {
-    font-size: 14px;
-  }
-  .editor-header .brand > span {
-    font-size: 9px;
-  }
-  .editor-header .brand img {
-    width: 31px;
-    height: 31px;
-  }
-  .editor-note {
-    font-size: 8px;
-  }
-  .editor-workspace {
-    display: flex;
-    flex-direction: column;
-  }
-  .settings-panel {
-    width: 100%;
-    border-right: 0;
-    min-height: 0;
-    order: 2;
-    padding: 22px;
-  }
-  .editor-main {
-    width: 100%;
-    padding: 20px 17px;
-    order: 1;
-  }
-  .workspace-title {
-    margin-bottom: 15px;
-  }
-  .workspace-title h1 {
-    font-size: 20px;
-  }
-  .workspace-title .section-kicker {
-    font-size: 7px;
-  }
-  .canvas-stage {
-    height: 430px;
-    min-height: 430px;
-  }
-  .canvas-stage.wide {
-    height: 240px;
-    min-height: 240px;
-  }
-  .preview-toolbar,
-  .preview-caption {
-    font-size: 8px;
-    padding: 10px 14px;
-  }
-  .slides-panel {
-    margin-top: 18px;
-  }
-  .slide-list {
-    gap: 8px;
-  }
-  .slide-item {
-    flex-basis: 105px;
-  }
-  .settings-panel .template-diagram {
-    height: 90px;
-    padding-top: 12px;
-  }
-  .template-diagram b {
-    width: 32px;
-  }
-  .template-options > button > span {
-    font-size: 9px;
-  }
-  .template-diagram i {
-    width: 30px;
-    height: 4px;
-  }
-  .template-diagram i:nth-child(2) {
-    width: 23px;
-    height: 3px;
-  }
-  .settings-panel h3 {
-    font-size: 13px;
-  }
-  .field {
-    font-size: 11px;
-  }
-  .field textarea,
-  .field select {
-    font-size: 12px;
-  }
-  .field-help {
-    font-size: 10px;
-  }
-  .upload-zone b {
-    font-size: 12px;
-  }
-  .upload-zone small {
-    font-size: 10px;
-  }
-  .upload-zone em {
-    font-size: 10px;
-  }
-  .color-input {
-    gap: 9px;
-    padding: 8px;
-  }
-  .color-input input {
-    width: 24px;
-    height: 24px;
-  }
-  .color-input span {
-    font-size: 11px;
-  }
-  .swatches {
-    gap: 10px;
-  }
-  .swatches button {
-    width: 25px;
-    height: 25px;
-  }
-  .document-page {
-    padding-top: 35px;
-  }
-  .document-page h1 {
-    font-size: 28px;
-  }
-  .document-page h2 {
-    font-size: 18px;
-  }
-  .document-page p,
-  .document-page li {
-    font-size: 13px;
-  }
-  .document-page table {
-    font-size: 9px;
-  }
-  .document-page th,
-  .document-page td {
-    padding: 7px 4px;
-  }
-  .export-dialog {
-    padding: 20px;
-  }
-  .preset-checkboxes label {
-    font-size: 10px;
-  }
-  .preset-checkboxes small {
-    font-size: 8px;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
@@ -1357,17 +1065,6 @@ select {
 }
 .download-error {
   padding: 0 28px;
-}
-@media (max-width: 600px) {
-  .download-actions {
-    width: 100%;
-  }
-  .download-actions .button {
-    flex: 1;
-  }
-  .download-status {
-    padding: 10px 18px;
-  }
 }
 
 .preview-edit-tools {
@@ -1556,9 +1253,9 @@ select {
   display: block;
   overflow: auto;
 }
-.canvas-stage:not(.wide) {
-  min-height: 720px;
-  height: calc(100vh - 260px);
+.canvas-stage {
+  min-height: 480px;
+  height: clamp(480px, calc(100vh - 260px), 1050px);
   max-height: 1050px;
 }
 .preview-scroll-area {
@@ -1583,13 +1280,6 @@ select {
 }
 .preview-zoom button:disabled {
   opacity: 0.4;
-}
-@media (max-width: 560px) {
-  .canvas-stage:not(.wide) {
-    min-height: 580px;
-    height: 70vh;
-    max-height: 800px;
-  }
 }
 
 .editor-main {

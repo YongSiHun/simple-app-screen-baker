@@ -4,7 +4,7 @@ import type {
   Slide,
 } from '../../editor/types/project';
 import { resolveFrame } from './frame.ts';
-import { contain, layout } from './layout.ts';
+import { contain, cover, layout } from './layout.ts';
 
 import { COMMON_ASPECT_RATIOS } from '../constants/devices.ts';
 import type { ImageSize } from '../../../core/types/images';
@@ -66,7 +66,7 @@ export function deviceGeometry(
  */
 export function recommendedImageSize(screen: ImageSize, source?: ImageSize) {
   const fitted = source
-    ? contain(source.width, source.height, { x: 0, y: 0, ...screen })
+    ? cover(source.width, source.height, { x: 0, y: 0, ...screen })
     : screen;
 
   return {

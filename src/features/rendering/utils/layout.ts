@@ -23,6 +23,25 @@ export function contain(
   };
 }
 
+/**
+ * 원본 비율을 유지하며 지정한 사각형을 빈틈없이 채웁니다.
+ * 넘치는 영역은 기기 화면의 클리핑으로 중앙에서 잘립니다.
+ */
+export function cover(
+  sourceWidth: number,
+  sourceHeight: number,
+  box: Rect,
+): Rect {
+  const scale = Math.max(box.width / sourceWidth, box.height / sourceHeight);
+
+  return {
+    x: box.x + (box.width - sourceWidth * scale) / 2,
+    y: box.y + (box.height - sourceHeight * scale) / 2,
+    width: sourceWidth * scale,
+    height: sourceHeight * scale,
+  };
+}
+
 /** Build the horizontal layout with one shared text-column position. */
 function landscapeLayout(width: number, height: number, template: TemplateId) {
   const reverse = template === 'center';

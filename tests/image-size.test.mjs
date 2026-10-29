@@ -6,7 +6,7 @@ import {
   imageAspectRatio,
 } from '../src/features/rendering/utils/deviceGeometry.ts';
 import { PRESETS } from '../src/features/export/constants/presets.ts';
-import { contain } from '../src/features/rendering/utils/layout.ts';
+import { cover } from '../src/features/rendering/utils/layout.ts';
 const design = {
   template: 'top',
   frame: 'auto',
@@ -16,7 +16,7 @@ const design = {
   weight: 800,
   frameColor: '#111827',
 };
-it('recommends source pixels from the image area instead of the full output', () => {
+it('recommends enough source pixels to fill each device screen', () => {
   for (const preset of PRESETS) {
     for (const template of ['top', 'center', 'frameless']) {
       const { screen, aspect } = deviceGeometry(
@@ -26,10 +26,9 @@ it('recommends source pixels from the image area instead of the full output', ()
         preset.device,
       );
       const suggested = recommendedImageSize(screen, aspect);
-      assert.ok(
-        suggested.width < preset.width && suggested.height < preset.height,
-      );
-      const actual = contain(aspect.width, aspect.height, {
+      assert.ok(suggested.width >= screen.width);
+      assert.ok(suggested.height >= screen.height);
+      const actual = cover(aspect.width, aspect.height, {
         x: 0,
         y: 0,
         ...screen,
@@ -42,9 +41,9 @@ it('recommends source pixels from the image area instead of the full output', ()
 it('uses the attached image aspect ratio and detects insufficient source resolution', () => {
   const screen = { width: 900, height: 1600 };
   assert.deepEqual(recommendedImageSize(screen, { width: 1600, height: 900 }), {
-    width: 900,
-    height: 507,
-    sufficient: true,
+    width: 2845,
+    height: 1600,
+    sufficient: false,
   });
   assert.equal(
     recommendedImageSize(screen, { width: 400, height: 225 }).sufficient,

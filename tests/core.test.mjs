@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import { inflateSync } from 'node:zlib';
 import {
   contain,
+  cover,
   layout,
   wrapText,
   fitText,
@@ -30,6 +31,23 @@ describe('aspect-preserving layout', () => {
       contain(200, 100, { x: 0, y: 0, width: 100, height: 100 }),
       { x: 0, y: 25, width: 100, height: 50 },
     );
+  });
+
+  it('fills a landscape screen with a centered portrait without distortion', () => {
+    assert.deepEqual(
+      cover(100, 200, { x: 10, y: 20, width: 200, height: 100 }),
+      { x: 10, y: -130, width: 200, height: 400 },
+    );
+  });
+  it('fills a portrait screen with a centered landscape without distortion', () => {
+    assert.deepEqual(
+      cover(200, 100, { x: 10, y: 20, width: 100, height: 200 }),
+      { x: -140, y: 20, width: 400, height: 200 },
+    );
+  });
+  it('preserves an image that already matches the screen ratio', () => {
+    const box = { x: 10, y: 20, width: 300, height: 400 };
+    assert.deepEqual(cover(600, 800, box), box);
   });
 
   for (const p of PRESETS) {
