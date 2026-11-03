@@ -13,3 +13,4 @@ yarn.lock
 *.tsbuildinfo
 *.log
 docs/
+README.md

@@ -1,8 +1,11 @@
 {
   "name": "simple-app-screen-baker",
+  "main": "src/worker.ts",
   "compatibility_date": "2026-10-15",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true,
     "not_found_handling": "single-page-application",
   },
 }

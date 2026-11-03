@@ -1,3 +1,4 @@
+import { createId } from '../../../core/utils/createId.ts';
 import type { DeviceKind, Slide } from '../types/project';
 import { resolveSlideImage } from '../utils/resolveSlideImage.ts';
 import { imageDimensions } from './imageDimensions.ts';
@@ -105,7 +106,7 @@ export async function loadImage(
     signal?.throwIfAborted();
     validateDimensions(bitmap.width, bitmap.height);
     checkBudget(bitmap.width * bitmap.height - pixels, 0);
-    const id = crypto.randomUUID();
+    const id = createId();
     resources.set(id, {
       bitmap,
       url: URL.createObjectURL(file),

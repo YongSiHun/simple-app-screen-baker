@@ -44,11 +44,20 @@ export function usePreviewSize(preset: OutputPreset) {
       const maxWidth =
         preset.orientation === 'landscape' ? Math.min(850, width * 0.9) : width;
       const scale = Math.min(maxWidth / preset.width, height / preset.height);
-      setSize({
+      const next = {
         width: preset.width * scale,
         height: preset.height * scale,
         viewportWidth: width,
         viewportHeight: height,
+      };
+      setSize((current) => {
+        const isUnchanged =
+          current.width === next.width &&
+          current.height === next.height &&
+          current.viewportWidth === next.viewportWidth &&
+          current.viewportHeight === next.viewportHeight;
+
+        return isUnchanged ? current : next;
       });
     };
 

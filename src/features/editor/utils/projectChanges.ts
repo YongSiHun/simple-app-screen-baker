@@ -1,3 +1,4 @@
+import { createId } from '../../../core/utils/createId.ts';
 import {
   DEFAULT_SLIDE_TITLE,
   DEFAULT_SLIDE_SUBTITLE,
@@ -17,7 +18,7 @@ import type { ProjectSnapshot } from '../types/history';
  */
 export function createSlide(): Slide {
   return {
-    id: crypto.randomUUID(),
+    id: createId(),
     title: DEFAULT_SLIDE_TITLE,
     subtitle: DEFAULT_SLIDE_SUBTITLE,
     images: {},
@@ -261,7 +262,7 @@ export function duplicateSlide(
   const original = state.project.slides[index];
   const duplicate = {
     ...original,
-    id: crypto.randomUUID(),
+    id: createId(),
     images: { ...original.images },
   };
   const slides = [...state.project.slides];

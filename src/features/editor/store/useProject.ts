@@ -1,3 +1,4 @@
+import { createId } from '../../../core/utils/createId.ts';
 import { create } from 'zustand';
 import {
   DEFAULT_PROJECT_NAME,
@@ -50,7 +51,7 @@ export const useProject = create<ProjectState>((set, get) => {
 
   return {
     project: {
-      id: crypto.randomUUID(),
+      id: createId(),
       name: DEFAULT_PROJECT_NAME,
       design: { ...DEFAULT_DESIGN },
       slides: [first],

@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node scripts/setup-git-hooks.mjs && node scripts/prepare-fonts.mjs && vite --host 127.0.0.1",
     "build": "node scripts/prepare-fonts.mjs && tsc --noEmit && vite build && node scripts/prerender.mjs",
-    "preview": "wrangler dev",
+    "preview": "wrangler dev --local-protocol https",
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

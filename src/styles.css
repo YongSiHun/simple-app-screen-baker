@@ -30,6 +30,9 @@
   font-family: Pretendard, system-ui, sans-serif;
   color: #0f172a;
   background: #fff;
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   font-synthesis: none;
   font-weight: 400;
   line-height: 1.6;
@@ -44,6 +47,7 @@ html {
 body {
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100svh;
   margin: 0;
 }
 button,
@@ -225,6 +229,7 @@ select {
 .editor {
   min-width: var(--app-min-width);
   min-height: max(100vh, var(--app-min-height));
+  min-height: max(100svh, var(--app-min-height));
   background: #f7f9fc;
 }
 .editor-header {
@@ -290,6 +295,7 @@ select {
   background: #fff;
   border-right: 1px solid #e2e8f0;
   min-height: calc(100vh - 110px);
+  min-height: calc(100svh - 110px);
   padding: 23px 22px 28px;
 }
 .panel-heading {
@@ -1257,6 +1263,10 @@ select {
 .canvas-stage {
   min-height: 480px;
   height: clamp(480px, calc(100vh - 260px), 1050px);
+  height: clamp(480px, calc(100svh - 260px), 1050px);
+  /* Keep zoomed children from changing the measured viewport size. */
+  contain: size;
+  overflow-anchor: none;
   max-height: 1050px;
 }
 .preview-scroll-area {
