@@ -1,4 +1,4 @@
-import { PAGE_TITLES } from './constants/pages';
+import { PAGE_DESCRIPTIONS, PAGE_TITLES } from './constants/pages';
 import {
   createBrowserRouter,
   Link,
@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { SiteLayout } from '../core/components/SiteLayout';
 import { EditorPage } from '../features/editor/screens/EditorPage';
 import {
+  AboutPage,
   GuidePage,
   PrivacyPage,
   TermsPage,
@@ -25,6 +26,30 @@ function Root() {
     document.title =
       (PAGE_TITLES[pathname] ?? '앱 스크린샷을 가장 간단하게') +
       ' | Simple App Screen Baker';
+    const description = PAGE_DESCRIPTIONS[pathname] ?? PAGE_DESCRIPTIONS['/'];
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute('content', description);
+    document
+      .querySelector('meta[property="og:title"]')
+      ?.setAttribute('content', document.title);
+    document
+      .querySelector('meta[property="og:description"]')
+      ?.setAttribute('content', description);
+    const canonical = document.querySelector<HTMLLinkElement>(
+      'link[rel="canonical"]',
+    );
+
+    if (canonical) {
+      const url = new URL(
+        pathname === '/editor' ? '/' : pathname,
+        canonical.href,
+      ).href;
+      canonical.href = url;
+      document
+        .querySelector('meta[property="og:url"]')
+        ?.setAttribute('content', url);
+    }
   }, [pathname]);
 
   return <Outlet />;
@@ -56,6 +81,7 @@ export const router = createBrowserRouter([
       {
         element: <SiteLayout />,
         children: [
+          { path: '/about', element: <AboutPage /> },
           { path: '/guide', element: <GuidePage /> },
           { path: '/privacy', element: <PrivacyPage /> },
           { path: '/terms', element: <TermsPage /> },

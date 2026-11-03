@@ -6,12 +6,38 @@
     <meta name="theme-color" content="#2563EB" />
     <meta
       name="description"
-      content="앱 스크린샷을 가장 간단하게. 회원가입 없이 브라우저에서 App Store와 Google Play용 이미지를 만드세요."
+      content="브라우저에서 앱 스크린샷을 업로드하고 템플릿과 설명 문구를 편집해 PNG 또는 ZIP으로 다운로드하세요."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="Simple App Screen Baker" />
+    <meta
+      property="og:title"
+      content="앱 스크린샷 PNG·ZIP 제작 도구 | Simple App Screen Baker"
+    />
+    <meta
+      property="og:description"
+      content="앱 스크린샷과 문구를 브라우저에서 편집하고 PNG·ZIP으로 저장하세요."
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Simple App Screen Baker — 앱 스크린샷을 가장 간단하게</title>
+    <title>앱 스크린샷 PNG·ZIP 제작 도구 | Simple App Screen Baker</title>
   </head>
   <body>
+    <noscript>
+      <main class="document-page shell">
+        <h1>Simple App Screen Baker — 앱 스크린샷 제작</h1>
+        <p>
+          이미지에 템플릿과 문구를 더하고 PNG·ZIP으로 저장하는 브라우저
+          도구입니다. 편집하려면 JavaScript를 활성화하세요. 작업은 현재 탭에만
+          유지됩니다.
+        </p>
+        <nav aria-label="서비스 안내">
+          <a href="/about">서비스 소개</a> · <a href="/guide">사용 가이드</a> ·
+          <a href="/privacy">개인정보처리방침</a> ·
+          <a href="/terms">이용약관</a>
+        </nav>
+      </main>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

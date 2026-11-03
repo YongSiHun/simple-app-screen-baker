@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 import { SiteCredits } from '../../../core/components/SiteCredits';
 import { useProject } from '../store/useProject';
 import { PRESETS } from '../../export/constants/presets';
@@ -78,6 +79,16 @@ export function EditorPage() {
         </main>
       </fieldset>
       <footer className="editor-footer">
+        <nav className="footer-links" aria-label="서비스 안내">
+          <Link to="/about">서비스 소개</Link>
+          <Link to="/guide">사용 가이드</Link>
+          <Link to="/privacy">개인정보처리방침</Link>
+          <Link to="/terms">이용약관</Link>
+        </nav>
+        <p>
+          브라우저에서 앱 화면과 문구를 편집하고 PNG·ZIP으로 저장하세요. 작업은
+          현재 탭에만 유지됩니다.
+        </p>
         <SiteCredits />
       </footer>
     </div>

@@ -44,6 +44,7 @@ export function SiteLayout() {
           <p>작은 앱의 큰 시작을 돕습니다.</p>
         </div>
         <div className="footer-links">
+          <Link to="/about">서비스 소개</Link>
           <Link to="/guide">사용 가이드</Link>
           <Link to="/privacy">개인정보처리방침</Link>
           <Link to="/terms">이용약관</Link>

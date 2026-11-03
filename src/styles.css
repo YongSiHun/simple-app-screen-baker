@@ -42,8 +42,8 @@ html {
   overflow-x: auto;
 }
 body {
-  min-width: var(--app-min-width);
-  min-height: var(--app-min-height);
+  min-width: 320px;
+  min-height: 100vh;
   margin: 0;
 }
 button,
@@ -223,6 +223,7 @@ select {
   color: #94a3b8;
 }
 .editor {
+  min-width: var(--app-min-width);
   min-height: max(100vh, var(--app-min-height));
   background: #f7f9fc;
 }
@@ -1414,4 +1415,39 @@ select {
   outline-offset: 0;
   resize: none;
   line-height: 1.25;
+}
+
+.editor-footer .footer-links {
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+@media (max-width: 600px) {
+  .site-header {
+    height: auto;
+  }
+  .nav-inner {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  .nav-inner nav {
+    gap: 16px;
+  }
+  .footer-links {
+    flex-wrap: wrap;
+    gap: 12px 20px;
+  }
+  .document-page {
+    padding-top: 30px;
+    overflow-wrap: anywhere;
+  }
+  .document-page h1 {
+    font-size: 28px;
+  }
+  .document-page th,
+  .document-page td {
+    padding: 8px 4px;
+  }
 }
