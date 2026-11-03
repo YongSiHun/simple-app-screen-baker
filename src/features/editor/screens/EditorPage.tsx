@@ -24,12 +24,8 @@ export function EditorPage() {
     Boolean(getImage(id)),
   );
   const currentImage = getSlideImage(slide, preset.device);
-  const { progress, error, done, exporting, download } = useEditorDownload(
-    project,
-    slide,
-    preset,
-    uploading,
-  );
+  const { progress, error, done, exporting, download, dismissDone } =
+    useEditorDownload(project, slide, preset, uploading);
   const busy = exporting || uploading;
   useHistoryShortcuts(busy);
 
@@ -51,6 +47,7 @@ export function EditorPage() {
         missing={plan.missing}
         progress={progress}
         done={done}
+        onDismissDone={dismissDone}
         error={error}
       />
       <fieldset disabled={busy} className="editor-workspace">

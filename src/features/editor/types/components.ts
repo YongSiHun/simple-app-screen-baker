@@ -23,6 +23,7 @@ export interface EditorStatusProps {
   progress: string;
   done: string;
   error: string;
+  onDismissDone: () => void;
 }
 
 export interface SettingsPanelProps {

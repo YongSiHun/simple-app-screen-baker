@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ExportFormat } from '../../export/types/plan';
 import type { Project, Slide, OutputPreset } from '../types/project';
 import { exportZip, png, save } from '../../export/services/export';
@@ -31,6 +31,15 @@ export function useEditorDownload(
   const [error, setError] = useState('');
   const [done, setDone] = useState('');
   const [exporting, setExporting] = useState(false);
+  useEffect(() => {
+    const hasCompletion = Boolean(done);
+
+    if (hasCompletion) {
+      const timer = window.setTimeout(() => setDone(''), 5000);
+
+      return () => window.clearTimeout(timer);
+    }
+  }, [done]);
   /**
    * 선택한 형식으로 현재 프로젝트의 이미지를 다운로드합니다.
    */
@@ -73,5 +82,12 @@ export function useEditorDownload(
     }
   }
 
-  return { progress, error, done, exporting, download };
+  return {
+    progress,
+    error,
+    done,
+    exporting,
+    download,
+    dismissDone: () => setDone(''),
+  };
 }
