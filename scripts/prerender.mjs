@@ -1,5 +1,6 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createServer, loadEnv } from 'vite';
+import { dirname } from 'node:path';
 import { siteOrigin } from './site-html.mjs';
 
 const modeIndex = process.argv.indexOf('--mode');
@@ -22,7 +23,24 @@ try {
   const { renderInfoPages } = await server.ssrLoadModule(
     '/src/features/info/prerender.tsx',
   );
+  const { structuredDataJson } = await server.ssrLoadModule(
+    '/src/features/info/structuredData.ts',
+  );
   const base = await readFile('dist/index.html', 'utf8');
+  const addStructuredData = (html, pathname) => {
+    const json = structuredDataJson(pathname, origin);
+
+    return json
+      ? html.replace(
+          '</head>',
+          '<script id="page-structured-data" type="application/ld+json">' +
+            json +
+            '</script></head>',
+        )
+      : html;
+  };
+
+  await writeFile('dist/index.html', addStructuredData(base, '/'));
   const pages = renderInfoPages();
 
   for (const page of pages) {
@@ -53,7 +71,9 @@ try {
       html = html.replaceAll(origin + '/', origin + page.pathname);
     }
 
-    await writeFile('dist' + page.pathname + '.html', html);
+    const filename = 'dist' + page.pathname + '.html';
+    await mkdir(dirname(filename), { recursive: true });
+    await writeFile(filename, addStructuredData(html, page.pathname));
   }
 
   if (origin) {
@@ -72,7 +92,7 @@ try {
     );
   } else {
     console.warn(
-      'SITE_URL is unset: canonical, og:url and sitemap.xml are omitted. Set the verified production origin before release.',
+      'SITE_URL is unset: canonical, og:url, sitemap.xml and JSON-LD are omitted. Set the verified production origin before release.',
     );
   }
 } finally {

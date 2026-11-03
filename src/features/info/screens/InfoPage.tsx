@@ -1,182 +1,113 @@
 import { Link } from 'react-router';
-import {
-  PRESETS,
-  APPLE_SOURCE,
-  GOOGLE_SOURCE,
-} from '../../export/constants/presets';
+import { GOOGLE_SOURCE } from '../../export/constants/presets';
+import { WORKFLOW } from '../data/workflow';
+import { APPLE_UPLOAD_SOURCE } from '../data/requirements';
+import { ContentLayout, InfoLink, ToolLink } from '../components/ContentLayout';
 /**
  * 스크린샷 제작과 다운로드 방법을 안내합니다.
  */
 export function GuidePage() {
   return (
-    <main id="main-content" className="document-page shell">
-      <span className="section-kicker">THE SCREEN BAKER HANDBOOK</span>
-      <h1>멋진 첫인상을 만드는 방법</h1>
-      <p className="lead">스크린샷 한 장과 앱을 소개할 한 문장이면 충분해요.</p>
+    <ContentLayout
+      title="처음부터 제출까지, 스크린샷 사용 가이드"
+      description="실제 앱 화면을 준비해 편집하고 PNG로 저장한 뒤 스토어에 등록하는 일곱 단계입니다."
+      kicker="THE SCREEN BAKER HANDBOOK"
+    >
       <p className="document-callout">
-        데스크톱 전용 편집기입니다. 최소 작업 해상도는 1280 × 800px이며, 작은
-        화면에서는 가로·세로 스크롤로 전체 작업 영역을 이용할 수 있습니다.
+        편집기는 데스크톱 작업영역(최소 1280 × 800px)을 사용하며 작은 화면에서는
+        스크롤이 필요합니다. 작업은 현재 탭에만 유지됩니다. 새로고침 전에
+        결과물을 다운로드하세요.
       </p>
-      <h2>1. 화면을 준비하세요</h2>
-      <p>
-        PNG, JPEG, WebP 파일을 선택하거나 업로드 영역에 드래그하세요. 여러
-        파일을 선택하면 첫 파일은 현재 슬라이드에, 나머지는 새 슬라이드에
-        추가됩니다. 파일당 25MB, 이미지당 4천만 픽셀까지 지원합니다.
-      </p>
-      <h2>2. 출력 규격과 템플릿을 선택하세요</h2>
-      <p>
-        스크린샷 한 장을 스마트폰·태블릿·PC 규격에 모두 사용할 수 있습니다. 원본
-        비율은 유지하고 선택한 기기 화면을 채우도록 자동 확대·축소합니다. 넘치는
-        부분은 중앙 기준으로 잘립니다. 기본값인 ‘출력 기기에 맞춤’은 출력 규격에
-        따라 기기 외형을 자동 적용합니다. 기기 프레임을 직접 선택해 외형을
-        고정할 수도 있습니다. 업로드 영역에서 선택한 기기의 권장 출력 해상도를
-        확인할 수 있습니다.
-      </p>
-      <p>
-        출력 규격을 바꿔도 문구·디자인·슬라이드 순서와 이미지는 유지됩니다.
-        기기별 화면을 따로 쓰고 싶다면 상단 출력 규격을 바꾼 뒤 해당 화면을
-        추가하세요. 해당 기기에 따로 등록한 화면을 우선 사용하고, 없으면 다른
-        기기에 등록한 화면을 재사용합니다. 재사용할 화면이 여러 장이면
-        스마트폰·태블릿·PC 순서로 선택합니다.
-      </p>
-      <p>
-        왼쪽 설정에서 Top Headline, Centered Device, Frameless 템플릿을
-        선택하세요. Top Headline은 상단 문구를, Centered Device는 기기를 먼저
-        보여주며 Frameless는 외곽 프레임을 숨깁니다. 템플릿·배경·글자색·폰트
-        굵기·프레임은 전체 프로젝트에 적용됩니다.
-      </p>
-      <h2>3. 설명 문구를 입력하세요</h2>
-      <p>
-        제목과 부제목은 슬라이드별로 적용됩니다. 긴 문구는 줄바꿈과 축소를
-        적용합니다. 허용 범위에도 들어가지 않으면 오류를 표시하므로 문구를
-        줄여주세요.
-      </p>
-      <h2>4. 스크린샷을 편집하세요</h2>
-      <p>
-        미리보기의 제목·부제목·기기 화면을 클릭한 뒤 드래그해 위치를 바꿀 수
-        있습니다. 선택 후 방향키로 1px씩, Shift + 방향키로 10px씩 이동합니다.
-        ‘모든 위치 초기화’를 누르고 확인하면 현재 슬라이드의 모든 컴포넌트를
-        기본 배치로 되돌립니다. Ctrl+Z로 편집을 실행 취소하고 Ctrl+Shift+Z 또는
-        Ctrl+Y로 다시 실행할 수 있습니다. 위치는 슬라이드별로 유지되며 기기를
-        바꾸면 출력 크기에 비례해 적용됩니다. 이동한 위치는 PNG와 ZIP
-        다운로드에도 반영됩니다.
-      </p>
-      <h2>5. 미리보기를 확인하세요</h2>
-      <p>
-        상단 출력 규격을 바꾸며 잘린 영역, 문구 줄바꿈과 기기·텍스트 위치를
-        확인하세요. 화면에 표시된 미리보기와 같은 배치를 선택한 규격의 PNG·ZIP에
-        적용합니다.
-      </p>
-      <h2>6. PNG 또는 ZIP으로 다운로드하세요</h2>
-      <p>
-        상단에서 기기를 선택한 뒤 ZIP 다운로드 또는 PNG 다운로드를 누르세요.
-        ZIP은 현재 기기의 전체 슬라이드를 폴더 없이 1.png, 2.png 순서로 묶고,
-        PNG는 현재 선택한 슬라이드를 저장합니다. 현재 문구와 디자인을 그대로
-        반영하며 별도의 다운로드 창은 열리지 않습니다. 이미지가 없는 슬라이드는
-        개수를 안내하고 ZIP에서 제외합니다. RGB 24-bit PNG의 가로·세로 크기와
-        색상 타입을 검사합니다.
-      </p>
-      <div className="document-callout">
-        <p>
-          작업은 현재 탭의 메모리에만 유지됩니다. 새로고침 또는 탭을 닫기 전에
-          다운로드하세요. 프로젝트 저장 및 불러오기는 아직 지원하지 않습니다.
-        </p>
-      </div>
-      <h2>지원 출력 규격</h2>
-      <p>
-        아래 표는 현재 도구에 구현된 출력 프리셋입니다. Google Play 크기는 허용
-        범위와 화면 비율을 바탕으로 선택한 프리셋이며, 모든 기기에서 요구되는
-        유일한 해상도를 의미하지 않습니다.
-      </p>
-      <table>
-        <thead>
-          <tr>
-            <th>플랫폼</th>
-            <th>기기</th>
-            <th>크기 (px)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {PRESETS.map((p) => (
-            <tr key={p.id}>
-              <td>
-                {p.platform === 'google-play'
-                  ? 'Google Play'
-                  : p.platform === 'mac-app-store'
-                    ? 'Mac App Store'
-                    : 'App Store'}
-              </td>
-              <td>{p.label}</td>
-              <td>
-                {p.width} × {p.height}
-              </td>
-            </tr>
+      <nav className="content-toc" aria-label="제작 단계 바로가기">
+        <ol>
+          {WORKFLOW.map((step, i) => (
+            <li key={step.title}>
+              <a
+                href={
+                  '#' +
+                  (i === 5
+                    ? 'downloads'
+                    : i === 6
+                      ? 'submission'
+                      : 'step-' + (i + 1))
+                }
+              >
+                {step.title}
+              </a>
+            </li>
           ))}
-        </tbody>
-      </table>
-      <h2>스토어에 제출하기 전</h2>
+        </ol>
+      </nav>
+      <ol className="workflow-steps">
+        {WORKFLOW.map((step, i) => (
+          <li
+            key={step.title}
+            id={
+              i === 5 ? 'downloads' : i === 6 ? 'submission' : 'step-' + (i + 1)
+            }
+          >
+            <span className="workflow-number" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <h2>{step.title}</h2>
+              <p>{step.instruction}</p>
+              <p className="workflow-check">
+                <strong>확인할 점</strong> {step.check}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <section className="document-callout">
+        <h2>등록 전에는 최신 규격을 확인하세요</h2>
+        <p>
+          공식 규격과 서비스의 출력 크기는{' '}
+          <Link to="/requirements">플랫폼별 규격</Link>에서 비교할 수 있습니다.
+          실제 스토어 화면의 항목 이름과 제출 절차는 변경될 수 있습니다.
+        </p>
+        <ul>
+          <li>
+            <InfoLink
+              href={APPLE_UPLOAD_SOURCE}
+              label="Apple: 앱 버전별 스크린샷 등록"
+            />
+          </li>
+          <li>
+            <InfoLink
+              href={GOOGLE_SOURCE}
+              label="Google Play: 등록정보의 미리보기 자료 관리"
+            />
+          </li>
+        </ul>
+      </section>
+      <h2>업로드·미리보기·다운로드 문제 해결</h2>
       <ul>
         <li>
-          App Store: 해당 앱이 지원하는 기기 크기별 제출 요구와 이미지 내용을
-          확인하세요. 알파 채널 없이 출력합니다. iPhone과 iPad의 필수 제출
-          대상은 공식 문서를 확인하세요.
+          손상되거나 지원하지 않는 파일은 PNG·JPEG·WebP로 다시 저장하세요.
+          HEIC·SVG·GIF는 지원하지 않습니다.
         </li>
         <li>
-          Google Play: 기기 유형별로 최대 8장, 일반 스크린샷은 최소 320px·최대
-          3840px 및 긴 변이 짧은 변의 2배 이하라는 조건을 확인하세요.
+          화면 일부가 잘리면 해당 기기 비율의 원본을 준비하세요. 자동 배치는
+          원본 비율을 유지하며 기기 화면을 채웁니다.
         </li>
         <li>
-          태블릿·Chromebook: 최소 4장, 가로 16:9 또는 세로 9:16의 대형 화면을
-          준비하고 앱 외 설명 문구를 제외하라는 공식 안내를 따르세요. 이
-          도구에서는 제목·부제목을 비우고 Frameless를 선택할 수 있습니다.
+          긴 문구 오류는 수식어를 줄여 해결해보세요. 폰트 로딩 또는 생성 오류가
+          표시되면 먼저 해당 안내를 확인하세요.
         </li>
         <li>
-          출력 검증은 파일 형식과 크기에 대한 검사입니다. 스토어의 콘텐츠 심사나
-          승인까지 보장하지 않습니다.
+          이미지 메모리가 부족하면 슬라이드 수를 줄여보세요. 새로고침이
+          필요하다면 가능한 결과물부터 다운로드하세요.
         </li>
       </ul>
       <p>
-        공식 안내:{' '}
-        <a href={APPLE_SOURCE} target="_blank" rel="noreferrer">
-          Apple 스크린샷 사양
-        </a>{' '}
-        ·{' '}
-        <a href={GOOGLE_SOURCE} target="_blank" rel="noreferrer">
-          Google Play 미리보기 자료
-        </a>
+        <Link to="/faq#download">다운로드 FAQ</Link> ·{' '}
+        <Link to="/guides/first-screenshot-workflow">
+          첫 제작을 위한 계획 세우기
+        </Link>
       </p>
-      <h2>자주 발생하는 문제</h2>
-      <ul>
-        <li>
-          이미지가 흐릿해요: 원본 해상도가 출력보다 작으면 확대됩니다. 가능한 한
-          높은 해상도의 원본을 사용하세요.
-        </li>
-        <li>
-          화면 일부가 잘려요: 기기 화면을 채우면서 원본 비율을 유지하기 위해
-          넘치는 부분을 자릅니다. 해당 기기 비율에 맞는 스크린샷을 따로
-          업로드하면 잘리는 영역을 줄일 수 있습니다.
-        </li>
-        <li>
-          다운로드할 이미지가 없대요: 현재 슬라이드에 스크린샷을 한 장 이상
-          등록했는지 확인하세요. 기기별 화면을 모두 올릴 필요는 없습니다.
-        </li>
-        <li>
-          폰트가 로딩되지 않아요: 페이지를 다시 불러와 보세요. 내보내기는 폰트
-          로딩이 완료되어야 실행됩니다.
-        </li>
-        <li>
-          이미지 생성이 느려요: 고해상도 파일은 순서대로 처리합니다. 메모리가
-          부족하면 슬라이드 수를 줄여주세요.
-        </li>
-        <li>
-          파일을 읽을 수 없어요: 손상되지 않은 PNG·JPEG·WebP로 다시
-          저장해주세요. HEIC·SVG·GIF는 지원하지 않습니다.
-        </li>
-      </ul>
-      <Link to="/editor" className="button">
-        스크린샷 만들러 가기 →
-      </Link>
-    </main>
+      <ToolLink />
+    </ContentLayout>
   );
 }
 
@@ -353,40 +284,72 @@ export function TermsPage() {
 /** 서비스 목적과 실제 제공 범위를 소개합니다. */
 export function AboutPage() {
   return (
-    <main id="main-content" className="document-page shell">
-      <span className="section-kicker">ABOUT SCREEN BAKER</span>
-      <h1>앱 화면을 소개 이미지로 만드는 도구</h1>
-      <p className="lead">
-        Simple App Screen Baker는 앱 개발자와 디자이너가 스크린샷에 설명 문구와
-        배경을 더해 스토어 제출용 이미지를 준비하는 브라우저 도구입니다.
-      </p>
-      <h2>무엇을 만들 수 있나요?</h2>
+    <ContentLayout
+      title="앱 화면을 스토어 소개 이미지로"
+      description="Simple App Screen Baker는 개인 개발자와 소규모 팀이 실제 앱 화면에 문구와 디자인을 더해 제출용 이미지를 준비하는 무료 웹 도구입니다."
+      kicker="ABOUT SCREEN BAKER"
+    >
+      <h2>한 장을 완성하는 데 필요한 설정을 모았습니다</h2>
       <p>
-        PNG·JPEG·WebP 화면을 올리고 Top Headline, Centered Device, Frameless
-        템플릿을 선택하세요. 제목·부제목, 배경·글자색·폰트 굵기·기기 프레임을
-        편집하고 미리보기에서 위치를 조정할 수 있습니다. 슬라이드 추가·복제·순서
-        변경과 실행 취소도 지원합니다.
+        빈 캔버스에 요소를 하나씩 배치하기보다, 출력 프리셋과 템플릿을 고르고 앱
+        화면을 올리는 흐름으로 시작합니다. 스마트폰·태블릿·PC 프레임과 문구
+        배치를 미리보기에서 조절할 수 있어 반복되는 스크린샷 구성을 준비할 때
+        사용할 수 있습니다.
+      </p>
+      <div className="content-card-grid">
+        <section className="content-card">
+          <h2>개인 개발자에게</h2>
+          <p>
+            한 앱의 핵심 기능을 슬라이드별로 설명하고, 프로젝트 공통 템플릿과
+            색을 사용해 일관된 소개 이미지를 준비하세요.
+          </p>
+        </section>
+        <section className="content-card">
+          <h2>작은 개발팀에게</h2>
+          <p>
+            출력 기기별 PNG와 ZIP을 내려받아 팀의 검토·등록 과정에 활용할 수
+            있습니다. 실시간 공동 편집이나 클라우드 공유 기능은 제공하지
+            않습니다.
+          </p>
+        </section>
+      </div>
+      <h2>현재 제공하는 기능</h2>
+      <ul>
+        <li>PNG·JPEG·WebP 원본 업로드와 복수 슬라이드 구성</li>
+        <li>
+          Top Headline·Centered Device·Frameless 템플릿, 배경·글자색·굵기·기기
+          프레임 설정
+        </li>
+        <li>제목·부제목 입력, 미리보기에서 위치 조정, 실행 취소·다시 실행</li>
+        <li>슬라이드 추가·복제·순서 변경과 PNG·ZIP 다운로드</li>
+      </ul>
+      <h2>스토어별 프리셋으로 준비하세요</h2>
+      <p>
+        App Store의 iPhone·iPad, Mac App Store와 Google Play의 Phone·Tablet
+        Landscape·Chromebook 프리셋을 제공합니다. 현재 구현된 크기와 공식 스토어
+        요건의 차이는 <Link to="/requirements">규격 안내</Link>에서 확인하세요.
+        스토어에 직접 등록하는 단계는{' '}
+        <Link to="/guide#submission">사용 가이드</Link>에서 안내합니다.
+      </p>
+      <h2>브라우저 안에서 제작하고 기기에 저장합니다</h2>
+      <p>
+        앱의 이미지 처리 코드는 선택한 원본과 편집 상태를 현재 탭의 메모리에서
+        다룹니다. PNG는 현재 슬라이드, ZIP은 현재 출력 기기의 전체 슬라이드를
+        저장합니다. 회원가입·결제·프로젝트 영구 저장·자동 스토어 제출은 제공하지
+        않습니다. 자세한 정보 처리는 <Link to="/privacy">개인정보처리방침</Link>
+        을 확인하세요.
       </p>
       <p>
-        현재 슬라이드는 PNG로, 선택한 출력 기기의 전체 슬라이드는 ZIP으로
-        저장합니다. App Store·Mac App Store·Google Play에 사용할 출력 프리셋의
-        실제 크기는 <Link to="/guide">사용 가이드</Link>에서 확인할 수 있습니다.
-        스토어의 제출 요건과 콘텐츠 정책은 별도로 확인해야 합니다.
-      </p>
-      <h2>이용 전에 알아두세요</h2>
-      <p>
-        이미지와 편집 상태는 현재 탭의 메모리에서 처리하며, 회원가입과 클라우드
-        저장은 제공하지 않습니다. 탭을 닫거나 새로고침하기 전에 결과물을
-        다운로드하세요. 데스크톱 전용 작업영역(최소 1280 × 800px)을 사용하며
-        작은 화면에서는 스크롤이 필요합니다.
+        편집기는 최소 1280 × 800px의 데스크톱 작업영역을 사용합니다. 작은
+        화면에서는 스크롤이 필요하며, 안내 콘텐츠는 모바일에서도 읽을 수
+        있습니다. Apple·Google의 공식 서비스가 아니며 제출 결과를 보장하지
+        않습니다. 이미지와 문구의 사용 권리는 이용자가 확인해야 합니다.
       </p>
       <p>
-        직접 권리를 가진 이미지와 문구를 사용하세요. 이 도구는 Apple·Google의
-        공식 서비스가 아니며 스토어 승인을 보장하지 않습니다.
+        <Link to="/faq">자주 묻는 질문</Link> ·{' '}
+        <Link to="/guides">스크린샷 제작 팁</Link>
       </p>
-      <Link className="button" to="/">
-        스크린샷 만들기 →
-      </Link>
-    </main>
+      <ToolLink />
+    </ContentLayout>
   );
 }

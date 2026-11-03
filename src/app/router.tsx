@@ -9,24 +9,29 @@ import {
 import { useEffect } from 'react';
 import { SiteLayout } from '../core/components/SiteLayout';
 import { EditorPage } from '../features/editor/screens/EditorPage';
-import {
-  AboutPage,
-  GuidePage,
-  PrivacyPage,
-  TermsPage,
-} from '../features/info/screens/InfoPage';
+import { INFO_ROUTES } from '../features/info/routes';
+import { structuredDataJson } from '../features/info/structuredData';
 /**
  * 경로가 바뀌면 페이지 제목과 스크롤 위치를 갱신합니다.
  */
 function Root() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const target = hash ? document.getElementById(hash.slice(1)) : null;
+
+    if (target) {
+      target.scrollIntoView();
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
+  useEffect(() => {
+    const pagePath = pathname.replace(/\/+$/, '') || '/';
 
     document.title =
-      (PAGE_TITLES[pathname] ?? '앱 스크린샷을 가장 간단하게') +
+      (PAGE_TITLES[pagePath] ?? '앱 스크린샷을 가장 간단하게') +
       ' | Simple App Screen Baker';
-    const description = PAGE_DESCRIPTIONS[pathname] ?? PAGE_DESCRIPTIONS['/'];
+    const description = PAGE_DESCRIPTIONS[pagePath] ?? PAGE_DESCRIPTIONS['/'];
     document
       .querySelector('meta[name="description"]')
       ?.setAttribute('content', description);
@@ -40,15 +45,29 @@ function Root() {
       'link[rel="canonical"]',
     );
 
+    document.getElementById('page-structured-data')?.remove();
+
     if (canonical) {
       const url = new URL(
-        pathname === '/editor' ? '/' : pathname,
+        pagePath === '/editor' ? '/' : pagePath,
         canonical.href,
       ).href;
       canonical.href = url;
       document
         .querySelector('meta[property="og:url"]')
         ?.setAttribute('content', url);
+      const json = structuredDataJson(
+        pagePath === '/editor' ? '/' : pagePath,
+        new URL(url).origin,
+      );
+
+      if (json) {
+        const script = document.createElement('script');
+        script.id = 'page-structured-data';
+        script.type = 'application/ld+json';
+        script.textContent = json;
+        document.head.append(script);
+      }
     }
   }, [pathname]);
 
@@ -81,10 +100,7 @@ export const router = createBrowserRouter([
       {
         element: <SiteLayout />,
         children: [
-          { path: '/about', element: <AboutPage /> },
-          { path: '/guide', element: <GuidePage /> },
-          { path: '/privacy', element: <PrivacyPage /> },
-          { path: '/terms', element: <TermsPage /> },
+          ...INFO_ROUTES,
           {
             path: '*',
             element: (

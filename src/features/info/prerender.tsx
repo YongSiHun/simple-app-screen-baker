@@ -1,21 +1,15 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { StaticRouter, Routes, Route } from 'react-router';
 import { SiteLayout } from '../../core/components/SiteLayout';
+import { INFO_ROUTES } from './routes';
 import {
-  AboutPage,
-  GuidePage,
-  PrivacyPage,
-  TermsPage,
-} from './screens/InfoPage';
-import { PAGE_TITLES, PAGE_DESCRIPTIONS } from '../../app/constants/pages';
+  INFO_PAGE_PATHS,
+  PAGE_TITLES,
+  PAGE_DESCRIPTIONS,
+} from '../../app/constants/pages';
 
 export function renderInfoPages() {
-  return Object.entries({
-    '/about': AboutPage,
-    '/guide': GuidePage,
-    '/privacy': PrivacyPage,
-    '/terms': TermsPage,
-  }).map(([pathname, Page]) => ({
+  return INFO_PAGE_PATHS.map((pathname) => ({
     pathname,
     title: PAGE_TITLES[pathname] + ' | Simple App Screen Baker',
     description: PAGE_DESCRIPTIONS[pathname],
@@ -23,7 +17,9 @@ export function renderInfoPages() {
       <StaticRouter location={pathname}>
         <Routes>
           <Route element={<SiteLayout />}>
-            <Route path={pathname} element={<Page />} />
+            {INFO_ROUTES.map((route) => (
+              <Route key={route.path} {...route} />
+            ))}
           </Route>
         </Routes>
       </StaticRouter>,

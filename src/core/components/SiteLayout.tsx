@@ -37,6 +37,13 @@ export function SiteLayout() {
           </nav>
         </div>
       </header>
+      <nav className="content-nav shell" aria-label="제작 도움말">
+        <NavLink to="/guide">사용 방법</NavLink>
+        <NavLink to="/guides">제작 팁</NavLink>
+        <NavLink to="/requirements">플랫폼 규격</NavLink>
+        <NavLink to="/faq">FAQ</NavLink>
+        <NavLink to="/about">서비스 소개</NavLink>
+      </nav>
       <Outlet />
       <footer className="site-footer shell">
         <div>
@@ -46,6 +53,9 @@ export function SiteLayout() {
         <div className="footer-links">
           <Link to="/about">서비스 소개</Link>
           <Link to="/guide">사용 가이드</Link>
+          <Link to="/guides">제작 팁</Link>
+          <Link to="/requirements">플랫폼 규격</Link>
+          <Link to="/faq">FAQ</Link>
           <Link to="/privacy">개인정보처리방침</Link>
           <Link to="/terms">이용약관</Link>
         </div>

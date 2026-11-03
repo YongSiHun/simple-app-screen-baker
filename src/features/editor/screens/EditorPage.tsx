@@ -82,6 +82,9 @@ export function EditorPage() {
         <nav className="footer-links" aria-label="서비스 안내">
           <Link to="/about">서비스 소개</Link>
           <Link to="/guide">사용 가이드</Link>
+          <Link to="/guides">제작 팁</Link>
+          <Link to="/requirements">플랫폼 규격</Link>
+          <Link to="/faq">FAQ</Link>
           <Link to="/privacy">개인정보처리방침</Link>
           <Link to="/terms">이용약관</Link>
         </nav>
