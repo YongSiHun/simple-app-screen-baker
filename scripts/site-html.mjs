@@ -40,7 +40,7 @@ export function siteHtml() {
       production = config.command === 'build' && config.isProduction;
       origin = siteOrigin(loadEnv(config.mode, config.root, '').SITE_URL);
     },
-    transformIndexHtml() {
+    transformIndexHtml(html) {
       const tags = [];
 
       if (production) {
@@ -64,7 +64,15 @@ export function siteHtml() {
         });
       }
 
-      return tags;
+      return {
+        html: origin
+          ? html.replaceAll(
+              'content="/social-preview.png"',
+              'content="' + origin + '/social-preview.png"',
+            )
+          : html,
+        tags,
+      };
     },
   };
 }

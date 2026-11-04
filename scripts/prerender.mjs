@@ -68,7 +68,15 @@ try {
       );
 
     if (origin) {
-      html = html.replaceAll(origin + '/', origin + page.pathname);
+      html = html
+        .replace(
+          'rel="canonical" href="' + origin + '/' + '"',
+          'rel="canonical" href="' + origin + page.pathname + '"',
+        )
+        .replace(
+          'property="og:url" content="' + origin + '/' + '"',
+          'property="og:url" content="' + origin + page.pathname + '"',
+        );
     }
 
     const filename = 'dist' + page.pathname + '.html';
