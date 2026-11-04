@@ -1,73 +1,76 @@
 import { APPLE_SOURCE, GOOGLE_SOURCE } from '../../export/constants/presets';
 import type { StoreRequirement } from '../types/content';
-export const REQUIREMENTS_CHECKED_AT = '2026-11-04';
+export const REQUIREMENTS_CHECKED_AT = '2026-11-05';
 export const APPLE_UPLOAD_SOURCE =
   'https://developer.apple.com/help/app-store-connect/manage-app-information/manage-your-app-store-assets';
 export const STORE_REQUIREMENTS: StoreRequirement[] = [
   {
     id: 'iphone',
     title: 'App Store · iPhone',
-    format: 'JPEG 또는 PNG · 알파 채널·투명도 제외',
+    format: 'JPEG 또는 PNG. 투명한 부분이 없는 이미지',
     sizes: [
-      '필수 Dynamic Island 중형 디스플레이의 세로 크기 예: 1179 × 2556, 1206 × 2622px',
-      '가로 이미지는 가로·세로를 서로 바꾼 크기. 다른 디스플레이별 허용 크기는 공식 표 확인',
+      '세로 이미지 예: 가로 1179 × 세로 2556픽셀, 가로 1206 × 세로 2622픽셀',
+      '큰 화면용 이미지 예: 가로 1320 × 세로 2868픽셀. 등록할 화면 크기에 따라 필요한 규격이 다릅니다.',
     ],
     count:
-      '디스플레이 크기별 1~10장. iPhone 지원 앱은 필수 디스플레이용 이미지 필요',
+      '화면 크기별 1~10장. iPhone 앱은 필수 화면 크기의 이미지를 준비해야 합니다.',
     notes: [
-      '서비스의 iPhone 프리셋은 1206 × 2622px, Large iPhone은 별도 대형 디스플레이용 1320 × 2868px입니다.',
-      '하나의 비율을 임의로 늘리는 대신 선택한 디스플레이의 정확한 픽셀 크기로 제출하세요.',
+      '이 도구의 iPhone은 1206 × 2622픽셀, Large iPhone은 1320 × 2868픽셀로 저장됩니다.',
+      '필수 제출 항목은 App Store Connect에서 확인하세요. 여기에는 대표적인 크기만 안내하며 전체 허용 크기는 공식 안내에서 확인할 수 있습니다.',
     ],
     presetIds: ['iphone', 'iphone-large'],
-    source: { label: 'Apple 공식 스크린샷 규격', href: APPLE_SOURCE },
+    source: { label: 'Apple 공식 규격 확인하기', href: APPLE_SOURCE },
   },
   {
     id: 'ipad',
     title: 'App Store · iPad',
-    format: 'JPEG 또는 PNG · 알파 채널·투명도 제외',
+    format: 'JPEG 또는 PNG. 투명한 부분이 없는 이미지',
     sizes: [
-      '13형 디스플레이: 세로 2064 × 2752 또는 2048 × 2732px',
-      '가로: 2752 × 2064 또는 2732 × 2048px',
+      '13형 세로 이미지: 2064 × 2752픽셀 또는 2048 × 2732픽셀',
+      '13형 가로 이미지: 2752 × 2064픽셀 또는 2732 × 2048픽셀',
     ],
-    count: '디스플레이 크기별 1~10장. iPadOS 지원 앱은 13형용 이미지 필요',
+    count:
+      '화면 크기별 1~10장. iPad를 지원하는 앱은 13형 이미지를 준비해야 합니다.',
     notes: [
-      '서비스는 2064 × 2752px 세로 프리셋을 제공합니다. 가로 출력 및 공식 표의 다른 크기를 모두 제공하지는 않습니다.',
-      '앱이 지원하는 기기와 언어별 화면을 확인하세요.',
+      '이 도구에서는 2064 × 2752픽셀의 세로 이미지를 만들 수 있습니다. iPad 가로 이미지는 지원하지 않습니다.',
+      '휴대폰 화면을 늘리기보다 실제 iPad에서 사용하는 화면을 준비해주세요.',
     ],
     presetIds: ['ipad'],
-    source: { label: 'Apple 공식 스크린샷 규격', href: APPLE_SOURCE },
+    source: { label: 'Apple 공식 규격 확인하기', href: APPLE_SOURCE },
   },
   {
     id: 'play-phone',
-    title: 'Google Play · 스마트폰',
-    format: 'JPEG 또는 24-bit PNG · 알파 채널 제외',
+    title: 'Google Play · 휴대폰',
+    format: 'JPEG 또는 투명한 부분이 없는 PNG',
     sizes: [
-      '일반 제출: 각 변 320~3840px, 긴 변은 짧은 변의 2배 이하',
-      '앱 추천 노출용 권장: 세로 9:16·1080 × 1920px 이상 또는 가로 16:9·1920 × 1080px 이상',
+      '가로와 세로 각각 320~3840픽셀. 긴 쪽이 짧은 쪽의 2배를 넘지 않아야 합니다.',
+      '추천 노출을 위한 앱 이미지: 세로 1080 × 1920픽셀 이상(9:16) 또는 가로 1920 × 1080픽셀 이상(16:9)',
     ],
     count:
-      '스토어 등록정보 공개에는 기기 유형 전체에 걸쳐 최소 2장. 기기 유형별 최대 8장',
+      '등록에 필요한 이미지는 전체 기기 유형을 합해 최소 2장. 기기 유형별 최대 8장까지 등록할 수 있습니다.',
     notes: [
-      '일반 게시 최소 조건과 앱 추천 노출 조건은 다릅니다. 앱의 추천 노출용 안내는 최소 4장이며 게임은 별도 조건입니다.',
-      '서비스의 Phone은 1080 × 1920px 세로 프리셋입니다.',
+      '이 도구의 Phone은 1080 × 1920픽셀 세로 이미지입니다.',
+      '스토어 등록의 최소 조건과 추천 노출을 위한 조건은 다릅니다. 추천 노출용 앱 이미지는 최소 4장을 안내하며, 게임은 별도 기준을 확인해주세요.',
     ],
     presetIds: ['play-phone'],
-    source: { label: 'Google Play 공식 미리보기 자료', href: GOOGLE_SOURCE },
+    source: { label: 'Google Play 공식 규격 확인하기', href: GOOGLE_SOURCE },
   },
   {
     id: 'play-tablet',
     title: 'Google Play · 태블릿',
-    format: 'JPEG 또는 24-bit PNG · 알파 채널 제외',
+    format: 'JPEG 또는 투명한 부분이 없는 PNG',
     sizes: [
-      '공식 대형 화면 항목: 1080~7680px, 가로 16:9 또는 세로 9:16',
-      '일반 스크린샷 항목에는 320~3840px·긴 변 2배 이하 조건이 별도로 기재되어 있습니다.',
+      '태블릿 등 큰 화면 안내: 가로·세로 각각 1080~7680픽셀',
+      '가로 이미지는 16:9, 세로 이미지는 9:16 비율',
     ],
-    count: '공식 대형 화면 항목은 최소 4장 안내. 기기 유형별 최대 8장',
+    count:
+      '큰 화면의 사용 모습을 보여주는 이미지는 4장 이상을 안내합니다. 기기 유형별 최대 8장까지 등록할 수 있습니다.',
     notes: [
-      '공식 문서의 일반 요건과 대형 화면 항목은 범위가 다릅니다. 제출 시 해당 기기 항목과 Play Console의 검증 결과를 함께 확인하세요.',
-      '서비스의 Tablet Landscape는 1920 × 1080px입니다. 앱 경험 밖의 설명 문구를 제외하라는 대형 화면 안내에 맞춰 제목·부제목을 비우고 Frameless를 선택하세요.',
+      '이 도구의 Tablet Landscape는 1920 × 1080픽셀 가로 이미지입니다.',
+      'Google은 앱 화면 밖의 별도 설명 문구를 제외하도록 안내합니다. 제목과 부제목을 비우고 테두리 없는 배치(Frameless)를 사용해보세요.',
+      '휴대폰용 일반 규격과 큰 화면 안내가 다르므로 Play Console의 태블릿 등록 항목도 확인해주세요.',
     ],
     presetIds: ['play-tablet'],
-    source: { label: 'Google Play 공식 미리보기 자료', href: GOOGLE_SOURCE },
+    source: { label: 'Google Play 공식 규격 확인하기', href: GOOGLE_SOURCE },
   },
 ];

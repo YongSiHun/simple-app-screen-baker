@@ -4,9 +4,9 @@ export const PAGE_TITLES: Record<string, string> = {
   '/': '앱 스크린샷 PNG·ZIP 제작 도구',
   '/editor': '앱 스크린샷 PNG·ZIP 제작 도구',
   '/about': '서비스 소개',
-  '/guide': '스크린샷 사용 방법과 스토어 등록 가이드',
+  '/guide': '앱 스크린샷 사용 가이드',
   '/guides': '스크린샷 제작 팁',
-  '/requirements': 'App Store·Google Play 스크린샷 제출 요건',
+  '/requirements': 'App Store·Google Play 플랫폼 규격',
   '/faq': '자주 묻는 질문',
   ...Object.fromEntries(
     GUIDE_ARTICLES.map((article) => ['/guides/' + article.slug, article.title]),
@@ -17,15 +17,15 @@ export const PAGE_TITLES: Record<string, string> = {
 export const PAGE_DESCRIPTIONS: Record<string, string> = {
   '/': '브라우저에서 앱 스크린샷을 업로드하고 템플릿과 설명 문구를 편집해 PNG 또는 ZIP으로 다운로드하세요.',
   '/about':
-    'Simple App Screen Baker의 브라우저 기반 이미지 편집, 출력 규격과 서비스 제공 범위를 소개합니다.',
+    '앱 화면에 문구와 디자인을 더해 소개 이미지를 만들어보세요. 무료로 이용할 수 있는 Simple App Screen Baker를 소개합니다.',
   '/guide':
-    '이미지 업로드부터 템플릿 선택, 문구·위치 편집, 미리보기와 PNG·ZIP 다운로드까지 안내합니다.',
+    '앱 화면 준비부터 디자인과 문구 편집, 완성 이미지 저장과 스토어 등록까지 순서대로 안내합니다.',
   '/guides':
-    '첫 제작의 작업 순서, 첫 이미지 구성, 설명 문구와 제출 전 점검에 관한 실용적인 스크린샷 제작 팁입니다.',
+    '어떤 화면을 고르고 문구를 어떻게 쓸지 고민될 때 참고할 앱 소개 이미지 제작 팁을 모았습니다.',
   '/requirements':
-    'Apple iPhone·iPad와 Google Play 스마트폰·태블릿의 공식 이미지 형식, 크기, 수량과 서비스 출력 프리셋을 비교합니다.',
+    'App Store와 Google Play에 필요한 이미지 크기와 수량, 이 도구에서 만들 수 있는 크기를 확인하세요.',
   '/faq':
-    '무료 이용, 회원가입, 이미지 보관, 상업적 사용, PNG·ZIP 다운로드와 Pretendard 라이선스를 안내합니다.',
+    '무료 이용, 이미지 보관과 다운로드, 홍보 이미지 사용에 관해 자주 묻는 질문에 답해드립니다.',
   ...Object.fromEntries(
     GUIDE_ARTICLES.map((article) => [
       '/guides/' + article.slug,
@@ -33,9 +33,9 @@ export const PAGE_DESCRIPTIONS: Record<string, string> = {
     ]),
   ),
   '/privacy':
-    '이미지의 브라우저 내 처리, 메모리 보관, Google AdSense 쿠키 및 접속 정보 처리에 관한 안내입니다.',
+    '편집에 사용하는 이미지와 문구, 사이트 접속 정보와 광고 관련 정보가 어떻게 처리되는지 안내합니다.',
   '/terms':
-    '스크린샷 제작 서비스의 이용 범위, 사용자 콘텐츠 권리, 결과물 이용 및 문의 방법을 안내합니다.',
+    '서비스 이용 범위와 자료의 사용 권한, 완성한 이미지의 이용 조건과 문의 방법을 안내합니다.',
 };
 
 export const INFO_PAGE_PATHS = Object.keys(PAGE_TITLES).filter(

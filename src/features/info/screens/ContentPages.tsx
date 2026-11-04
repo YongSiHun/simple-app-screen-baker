@@ -12,12 +12,13 @@ export function GuidesPage() {
   return (
     <ContentLayout
       title="스크린샷 제작 팁"
-      description="앱의 가치를 한 장씩 설명하고, 실제 스토어에 제출하기까지의 편집 노하우를 모았습니다."
-      kicker="SCREENSHOT FIELD NOTES"
+      description="어떤 화면을 고를지, 문구는 어떻게 쓸지 고민될 때 참고해보세요. 처음 제작하는 분에게 필요한 팁을 모았습니다."
+      kicker="제작 팁"
     >
       <p>
-        도구의 버튼 사용법은 <Link to="/guide">사용 가이드</Link>, 최신 제출
-        조건은 <Link to="/requirements">플랫폼별 규격</Link>에서 확인하세요.
+        차근차근 따라 하는 제작 순서는 <Link to="/guide">사용 가이드</Link>,
+        스토어 등록 조건은 <Link to="/requirements">플랫폼별 규격</Link>에서
+        확인하세요.
       </p>
       <div className="content-card-grid">
         {GUIDE_ARTICLES.map((article) => (
@@ -48,7 +49,7 @@ export function GuideArticlePage() {
       <ContentLayout
         title="제작 팁을 찾을 수 없습니다"
         description="목록에서 다른 제작 팁을 선택해주세요."
-        kicker="GUIDE NOT FOUND"
+        kicker="제작 팁 안내"
       >
         <Link to="/guides">제작 팁 목록</Link>
       </ContentLayout>
@@ -122,7 +123,7 @@ export function GuideArticlePage() {
             );
           })}
           <li>
-            <Link to="/requirements">플랫폼별 규격과 공식 출처</Link>
+            <Link to="/requirements">플랫폼 규격과 공식 안내</Link>
           </li>
         </ul>
       </aside>
@@ -134,18 +135,17 @@ export function GuideArticlePage() {
 export function RequirementsPage() {
   return (
     <ContentLayout
-      title="플랫폼별 스크린샷 제출 요건"
-      description="스토어의 공식 조건과 이 도구의 출력 프리셋을 구분해 확인하세요."
-      kicker="STORE REQUIREMENTS"
+      title="스토어에 맞는 이미지 크기 확인하기"
+      description="등록할 기기의 이미지 크기와 수량을 확인하세요. 이 도구에서 만들 수 있는 크기도 함께 안내합니다."
+      kicker="플랫폼 규격"
     >
       <p className="document-callout">
-        공식 문서 최종 확인:{' '}
+        규격 확인일:{' '}
         <time dateTime={REQUIREMENTS_CHECKED_AT}>
           {REQUIREMENTS_CHECKED_AT}
         </time>
-        . 정책은 변경될 수 있습니다. 아래 Apple 크기는 대상 디스플레이의
-        예시이며 전체 허용 크기 목록은 아닙니다. 제출 직전 공식 문서와 계정의
-        기기·언어별 검증을 다시 확인하세요.
+        . 스토어의 기준은 바뀔 수 있습니다. 아래에는 대표적인 규격을 안내하므로
+        등록 전 공식 안내와 스토어 등록 화면을 함께 확인해주세요.
       </p>
       <nav className="content-toc" aria-label="기기별 규격">
         <ul>
@@ -160,9 +160,9 @@ export function RequirementsPage() {
         <section id={item.id} key={item.id} className="requirement-card">
           <h2>{item.title}</h2>
           <dl>
-            <dt>스토어 이미지 형식</dt>
+            <dt>사용할 수 있는 파일</dt>
             <dd>{item.format}</dd>
-            <dt>공식 크기·비율 안내</dt>
+            <dt>스토어가 안내하는 크기</dt>
             <dd>
               <ul>
                 {item.sizes.map((size) => (
@@ -170,9 +170,9 @@ export function RequirementsPage() {
                 ))}
               </ul>
             </dd>
-            <dt>이미지 수</dt>
+            <dt>필요한 이미지 수</dt>
             <dd>{item.count}</dd>
-            <dt>이 도구의 실제 출력</dt>
+            <dt>이 도구에서 만들 수 있는 크기</dt>
             <dd>
               {PRESETS.filter((p) => item.presetIds.includes(p.id)).map((p) => (
                 <span className="preset-badge" key={p.id}>
@@ -189,17 +189,17 @@ export function RequirementsPage() {
           <InfoLink {...item.source} />
         </section>
       ))}
-      <h2>업로드 형식과 출력 형식은 다릅니다</h2>
+      <h2>완성한 이미지는 PNG로 저장됩니다</h2>
       <p>
-        이 도구에 올릴 수 있는 원본은 PNG·JPEG·WebP이며, 결과물은 알파 채널 없는
-        RGB 24-bit PNG입니다. ZIP은 그 PNG들을 묶는 다운로드 형식이므로 압축을
-        풀어 개별 이미지를 스토어에 등록하세요. 앱스토어 제출 대행이나 임의 크기
-        출력 기능은 제공하지 않습니다.
+        PNG, JPEG, WebP 파일을 올려 편집할 수 있으며, 완성한 결과는 투명한
+        부분이 없는 PNG 이미지로 저장됩니다. ZIP으로 받았다면 먼저 압축을 풀고
+        이미지를 한 장씩 등록해주세요. 이미지 크기는 화면에 제공되는 항목 중에서
+        선택할 수 있습니다.
       </p>
       <p>
-        Mac·Chromebook용 기존 출력 프리셋도 있지만, 이 페이지의 비교 대상은
-        iPhone·iPad·Google Play 스마트폰·태블릿입니다. 모든 공식 규격을 구현한
-        것으로 해석하지 마세요.
+        이 도구는 Mac과 Chromebook용 이미지 크기도 제공합니다. 위 안내는 iPhone,
+        iPad, Google Play 휴대폰과 태블릿을 중심으로 정리했습니다. 다른 기기에
+        등록할 때는 해당 스토어의 공식 안내를 확인해주세요.
       </p>
       <p>
         <Link to="/guide#submission">스토어 등록 단계 보기</Link> ·{' '}
@@ -214,8 +214,8 @@ export function FaqPage() {
   return (
     <ContentLayout
       title="자주 묻는 질문"
-      description="이미지 보관, 다운로드, 상업적 이용과 편집 환경에 관한 실제 서비스 동작을 안내합니다."
-      kicker="QUESTIONS & ANSWERS"
+      description="무료 이용부터 이미지 저장과 다운로드까지, 이용하면서 궁금할 수 있는 내용을 모았습니다."
+      kicker="이용 도움말"
     >
       <div className="faq-list">
         {FAQ.map((item) => (
