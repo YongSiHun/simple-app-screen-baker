@@ -28,12 +28,20 @@ function readSegment(
     return;
   }
 
-  const isStandalone = marker === 1 || (marker >= 0xd0 && marker <= 0xd7);
+  const isStandalone = isStandaloneMarker(marker);
 
   if (isStandalone) {
     return { marker, length: 0, dataOffset: offset, nextOffset: offset };
   }
 
+  return readSizedSegment({ bytes, view }, marker, offset);
+}
+
+function readSizedSegment(
+  { bytes, view }: ImageHeader,
+  marker: number,
+  offset: number,
+): JpegSegment | undefined {
   const isMissingLength = offset + 2 > bytes.length;
 
   if (isMissingLength) {
@@ -57,6 +65,24 @@ export function jpegDimensions(header: ImageHeader): ImageSize | undefined {
     return;
   }
 
+  return readFrames(header);
+}
+
+function frameDimensions(
+  header: ImageHeader,
+  segment: JpegSegment,
+): ImageSize | undefined {
+  const isFrame = JPEG_FRAME_MARKERS.has(segment.marker) && segment.length >= 8;
+
+  if (isFrame) {
+    return {
+      width: header.view.getUint16(segment.dataOffset + 5),
+      height: header.view.getUint16(segment.dataOffset + 3),
+    };
+  }
+}
+
+function readFrames(header: ImageHeader): ImageSize | undefined {
   let offset = 2;
 
   while (offset + 4 <= header.bytes.length) {
@@ -67,16 +93,17 @@ export function jpegDimensions(header: ImageHeader): ImageSize | undefined {
       return;
     }
 
-    const isFrame =
-      JPEG_FRAME_MARKERS.has(segment.marker) && segment.length >= 8;
+    const dimensions = frameDimensions(header, segment);
+    const hasDimensions = dimensions !== undefined;
 
-    if (isFrame) {
-      return {
-        width: header.view.getUint16(segment.dataOffset + 5),
-        height: header.view.getUint16(segment.dataOffset + 3),
-      };
+    if (hasDimensions) {
+      return dimensions;
     }
 
     offset = segment.nextOffset;
   }
+}
+
+function isStandaloneMarker(marker: number) {
+  return marker === 1 || (marker >= 0xd0 && marker <= 0xd7);
 }

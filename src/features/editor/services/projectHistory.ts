@@ -15,12 +15,27 @@ function appendSnapshot(history: ProjectSnapshot[], entry: ProjectSnapshot) {
   return [...history, entry].slice(-HISTORY_LIMIT);
 }
 
-/** Add a project's image references without allocating flattened arrays. */
+const projectImages = new WeakMap<Project, ReadonlySet<string>>();
+
+/** Immutable project snapshots share their cached image references across drag frames. */
+function imageIdsFor(project: Project): ReadonlySet<string> {
+  const cached = projectImages.get(project);
+
+  if (cached) {
+    return cached;
+  }
+
+  const ids = new Set(
+    project.slides.flatMap((slide) => Object.values(slide.images)),
+  );
+  projectImages.set(project, ids);
+
+  return ids;
+}
+
 function collectProjectImages(project: Project, used: Set<string>) {
-  for (const slide of project.slides) {
-    for (const id of Object.values(slide.images)) {
-      used.add(id);
-    }
+  for (const id of imageIdsFor(project)) {
+    used.add(id);
   }
 }
 

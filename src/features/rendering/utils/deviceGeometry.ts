@@ -43,14 +43,11 @@ export function deviceGeometry(
   const aspect = frameAspect(frame, arrangement.landscape);
   const ratio = aspect.width / aspect.height;
   const outer = contain(ratio, 1, arrangement.device);
-  const bezel =
-    design.template === 'frameless'
-      ? 0
-      : outer.width * (frame === 'phone' ? 0.032 : 0.022);
-  const radius =
-    design.template === 'frameless'
-      ? outer.width * 0.012
-      : outer.width * (frame === 'phone' ? 0.115 : 0.045);
+  const { bezel, radius } = frameInsets(
+    design.template === 'frameless',
+    frame,
+    outer.width,
+  );
   const screen = {
     x: outer.x + bezel,
     y: outer.y + bezel,
@@ -114,4 +111,17 @@ function greatestCommonDivisor(first: number, second: number): number {
   }
 
   return divisor;
+}
+
+function frameInsets(frameless: boolean, frame: DeviceKind, width: number) {
+  if (frameless) {
+    return { bezel: 0, radius: width * 0.012 };
+  }
+
+  const isPhone = frame === 'phone';
+
+  return {
+    bezel: width * (isPhone ? 0.032 : 0.022),
+    radius: width * (isPhone ? 0.115 : 0.045),
+  };
 }

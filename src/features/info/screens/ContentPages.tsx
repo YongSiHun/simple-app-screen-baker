@@ -1,11 +1,11 @@
 import { Link, useParams } from 'react-router';
 import { ContentLayout, InfoLink, ToolLink } from '../components/ContentLayout';
-import { GUIDE_ARTICLES } from '../data/guides';
-import { FAQ } from '../data/faq';
+import { GUIDE_ARTICLES } from '../content/guides';
+import { FAQ } from '../content/faq';
 import {
   STORE_REQUIREMENTS,
   REQUIREMENTS_CHECKED_AT,
-} from '../data/requirements';
+} from '../content/requirements';
 import { PRESETS } from '../../export/constants/presets';
 
 export function GuidesPage() {

@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { ELEMENT_LABELS } from '../constants/preview';
@@ -22,7 +23,14 @@ export function PreviewTextEditor({
 }: PreviewTextEditorProps) {
   const input = useRef<HTMLTextAreaElement>(null);
   const finished = useRef(false);
-  const { text, beginEdit, endEdit, cancelEdit } = useProject();
+  const { text, beginEdit, endEdit, cancelEdit } = useProject(
+    useShallow((state) => ({
+      text: state.text,
+      beginEdit: state.beginEdit,
+      endEdit: state.endEdit,
+      cancelEdit: state.cancelEdit,
+    })),
+  );
 
   useEffect(() => {
     finished.current = false;

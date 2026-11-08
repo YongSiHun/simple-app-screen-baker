@@ -7,8 +7,7 @@ export function historyShortcut(
   event: HistoryKeyEvent,
   editingText: boolean,
 ): HistoryCommand {
-  const shouldIgnoreShortcut =
-    editingText || event.altKey || (!event.ctrlKey && !event.metaKey);
+  const shouldIgnoreShortcut = blocksHistoryShortcut(event, editingText);
 
   if (shouldIgnoreShortcut) {
     return null;
@@ -18,7 +17,7 @@ export function historyShortcut(
   const isUndoKey = key === 'z';
 
   if (isUndoKey) {
-    return event.shiftKey ? 'redo' : 'undo';
+    return zCommand(event.shiftKey);
   }
 
   const isRedoKey = key === 'y' && event.ctrlKey && !event.shiftKey;
@@ -28,4 +27,14 @@ export function historyShortcut(
   }
 
   return null;
+}
+
+function zCommand(shiftKey: boolean): HistoryCommand {
+  return shiftKey ? 'redo' : 'undo';
+}
+
+function blocksHistoryShortcut(event: HistoryKeyEvent, editingText: boolean) {
+  const hasModifier = event.ctrlKey || event.metaKey;
+
+  return editingText || event.altKey || !hasModifier;
 }

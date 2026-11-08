@@ -40,6 +40,12 @@ await chmod(new URL('../.githooks/pre-commit', import.meta.url), 0o755);
 const needsHookRegistration = hooksPath !== '.githooks';
 
 if (needsHookRegistration) {
+  registerHooks();
+}
+
+console.log('Git pre-commit: Prettier + ESLint checks enabled.');
+
+function registerHooks() {
   const result = spawnSync(
     'git',
     ['config', '--local', 'core.hooksPath', '.githooks'],
@@ -56,5 +62,3 @@ if (needsHookRegistration) {
     );
   }
 }
-
-console.log('Git pre-commit: Prettier + ESLint checks enabled.');

@@ -172,33 +172,41 @@ export function layout(
 /**
  * 명시적 줄바꿈과 글자 폭을 고려해 문구를 나눕니다.
  */
+function wrapParagraph(
+  paragraph: string,
+  maxWidth: number,
+  measure: (value: string) => number,
+): string[] {
+  const lines: string[] = [];
+  let line = '';
+
+  for (const char of paragraph) {
+    const next = line + char;
+    const shouldWrapLine = line.length > 0 && measure(next) > maxWidth;
+
+    if (shouldWrapLine) {
+      lines.push(line.trimEnd());
+      line = char.trimStart();
+      continue;
+    }
+
+    line = next;
+  }
+
+  lines.push(line.trimEnd());
+
+  return lines;
+}
+
 export function wrapText(
   text: string,
   maxWidth: number,
   measure: (value: string) => number,
 ): string[] {
-  const lines: string[] = [];
-
-  for (const paragraph of text.replace(/\r/g, '').split('\n')) {
-    let line = '';
-
-    for (const char of Array.from(paragraph)) {
-      const next = line + char;
-      const shouldWrapLine = line.length > 0 && measure(next) > maxWidth;
-
-      if (shouldWrapLine) {
-        lines.push(line.trimEnd());
-        line = char.trimStart();
-        continue;
-      }
-
-      line = next;
-    }
-
-    lines.push(line.trimEnd());
-  }
-
-  return lines;
+  return text
+    .replace(/\r/g, '')
+    .split('\n')
+    .flatMap((paragraph) => wrapParagraph(paragraph, maxWidth, measure));
 }
 
 /**

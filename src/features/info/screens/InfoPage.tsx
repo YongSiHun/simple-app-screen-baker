@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { GOOGLE_SOURCE } from '../../export/constants/presets';
-import { WORKFLOW } from '../data/workflow';
-import { APPLE_UPLOAD_SOURCE } from '../data/requirements';
+import { WORKFLOW } from '../content/workflow';
+import { APPLE_UPLOAD_SOURCE } from '../content/requirements';
 import { ContentLayout, InfoLink, ToolLink } from '../components/ContentLayout';
 
 export function GuidePage() {

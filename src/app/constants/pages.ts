@@ -1,4 +1,4 @@
-import { GUIDE_ARTICLES } from '../../features/info/data/guides';
+import { GUIDE_ARTICLES } from '../../features/info/content/guides';
 
 export const PAGE_TITLES: Record<string, string> = {
   '/': '앱 스크린샷 PNG·ZIP 제작 도구',

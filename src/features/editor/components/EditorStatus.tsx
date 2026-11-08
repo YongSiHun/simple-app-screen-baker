@@ -10,9 +10,12 @@ export function EditorStatus({
   error,
   onDismissDone,
 }: EditorStatusProps) {
-  const hasDownloadFeedback = Boolean(progress || error);
-  const showZipNotice =
-    hasExportableSlides && missing > 0 && !hasDownloadFeedback;
+  const showZipNotice = shouldShowZipNotice(
+    hasExportableSlides,
+    missing,
+    progress,
+    error,
+  );
 
   return (
     <>
@@ -25,23 +28,7 @@ export function EditorStatus({
         )}
         {progress && <span>{progress}…</span>}
       </div>
-      {done && (
-        <div
-          className="download-toast"
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <span>{done}</span>
-          <button
-            type="button"
-            onClick={onDismissDone}
-            aria-label="다운로드 완료 알림 닫기"
-          >
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-      )}
+      <DownloadToast done={done} onDismiss={onDismissDone} />
       {error && (
         <p className="download-error error" role="alert">
           {error}
@@ -49,4 +36,47 @@ export function EditorStatus({
       )}
     </>
   );
+}
+
+function DownloadToast({
+  done,
+  onDismiss,
+}: {
+  done: string;
+  onDismiss: () => void;
+}) {
+  const hasNoCompletion = !done;
+
+  if (hasNoCompletion) {
+    return null;
+  }
+
+  return (
+    <div
+      className="download-toast"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <span>{done}</span>
+      <button
+        type="button"
+        onClick={onDismiss}
+        aria-label="다운로드 완료 알림 닫기"
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+  );
+}
+
+function shouldShowZipNotice(
+  hasSlides: boolean,
+  missing: number,
+  progress: string,
+  error: string,
+) {
+  const hasFeedback = Boolean(progress || error);
+
+  return hasSlides && missing > 0 && !hasFeedback;
 }

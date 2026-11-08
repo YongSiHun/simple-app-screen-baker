@@ -22,11 +22,7 @@ export function validatePreset(p: OutputPreset): boolean {
   const isGooglePlay = p.platform === 'google-play';
 
   if (isGooglePlay) {
-    return (
-      Math.min(p.width, p.height) >= 320 &&
-      Math.max(p.width, p.height) <= 3840 &&
-      Math.max(p.width, p.height) <= 2 * Math.min(p.width, p.height)
-    );
+    return validateGoogleSize(p.width, p.height);
   }
 
   return PRESETS.some(
@@ -37,4 +33,11 @@ export function validatePreset(p: OutputPreset): boolean {
       v.width === p.width &&
       v.height === p.height,
   );
+}
+
+function validateGoogleSize(width: number, height: number) {
+  const min = Math.min(width, height);
+  const max = Math.max(width, height);
+
+  return min >= 320 && max <= 3840 && max <= 2 * min;
 }

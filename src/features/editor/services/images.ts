@@ -1,19 +1,14 @@
-import { createId } from '../../../core/utils/createId.ts';
 import type { DeviceKind, Slide } from '../types/project';
 import { resolveSlideImage } from '../utils/resolveSlideImage.ts';
 import { imageDimensions } from './imageDimensions.ts';
-import type { ImageResource } from '../types/images';
+import { imageRepository } from '../data/imageRepository.ts';
+import type { ImageRepository } from '../data/imageRepository.ts';
+import { decodeImage } from '../data/decodeImage.ts';
 import {
   IMAGE_TYPES,
   MAX_IMAGE_BYTES,
   MAX_IMAGE_PIXELS,
-  TOTAL_IMAGE_PIXELS,
-  TOTAL_IMAGE_BYTES,
 } from '../constants/images.ts';
-
-const resources = new Map<string, ImageResource>();
-let pendingPixels = 0;
-let pendingBytes = 0;
 
 function validateDimensions(width: number, height: number) {
   const isInvalid =
@@ -24,51 +19,7 @@ function validateDimensions(width: number, height: number) {
   }
 }
 
-function checkBudget(pixels: number, bytes: number) {
-  let totalPixels = pendingPixels + pixels;
-  let totalBytes = pendingBytes + bytes;
-
-  for (const resource of resources.values()) {
-    totalPixels += resource.bitmap.width * resource.bitmap.height;
-    totalBytes += resource.bytes;
-  }
-
-  const exceedsBudget =
-    totalPixels > TOTAL_IMAGE_PIXELS || totalBytes > TOTAL_IMAGE_BYTES;
-
-  if (exceedsBudget) {
-    throw new Error(
-      '이미지 메모리 한도에 도달했습니다. 작업을 다운로드한 뒤 새로고침해주세요.',
-    );
-  }
-}
-
-/**
- * 이미지 식별자에 연결된 브라우저 리소스를 조회합니다.
- */
-export function getImage(id: string | undefined) {
-  return id ? resources.get(id) : undefined;
-}
-
-/**
- * 기기 전용 이미지 또는 재사용 가능한 원본을 조회합니다.
- */
-export function getSlideImage(slide: Slide, device: DeviceKind) {
-  const source = resolveSlideImage(slide, device, (id) =>
-    Boolean(getImage(id)),
-  );
-  const image = getImage(source?.id);
-
-  return source && image ? { ...source, ...image } : undefined;
-}
-
-/**
- * 파일 형식과 크기를 검사한 뒤 브라우저 이미지 리소스로 등록합니다.
- */
-export async function loadImage(
-  file: File,
-  signal?: AbortSignal,
-): Promise<string> {
+function validateFile(file: File) {
   const hasUnsupportedType = !IMAGE_TYPES.includes(file.type);
 
   if (hasUnsupportedType) {
@@ -80,61 +31,59 @@ export async function loadImage(
   if (exceedsFileLimit) {
     throw new Error('이미지는 파일당 25MB 이하로 준비해주세요.');
   }
+}
 
-  signal?.throwIfAborted();
-  const { width, height } = imageDimensions(
-    new Uint8Array(await file.arrayBuffer()),
-    file.type,
-  );
-  validateDimensions(width, height);
-  signal?.throwIfAborted();
-  const pixels = width * height;
-  checkBudget(pixels, file.size);
-  pendingPixels += pixels;
-  pendingBytes += file.size;
-  let bitmap: ImageBitmap | undefined;
+/** Application workflow depends on resource/decoder ports, not their storage implementation. */
+export function createImageService(
+  repository: ImageRepository,
+  decode = decodeImage,
+) {
+  function getImage(id: string | undefined) {
+    return repository.get(id);
+  }
 
-  try {
-    try {
-      bitmap = await createImageBitmap(file);
-    } catch {
-      throw new Error(
-        file.name + ': 이미지를 읽을 수 없습니다. 다른 파일을 선택해주세요.',
-      );
-    }
+  function getSlideImage(slide: Pick<Slide, 'images'>, device: DeviceKind) {
+    const source = resolveSlideImage(slide, device, (id) =>
+      Boolean(getImage(id)),
+    );
+    const image = getImage(source?.id);
 
+    return source && image ? { ...source, ...image } : undefined;
+  }
+
+  async function loadImage(file: File, signal?: AbortSignal): Promise<string> {
+    validateFile(file);
     signal?.throwIfAborted();
-    validateDimensions(bitmap.width, bitmap.height);
-    checkBudget(bitmap.width * bitmap.height - pixels, 0);
-    const id = createId();
-    resources.set(id, {
-      bitmap,
-      url: URL.createObjectURL(file),
-      bytes: file.size,
-    });
-    bitmap = undefined;
+    const { width, height } = imageDimensions(
+      new Uint8Array(await file.arrayBuffer()),
+      file.type,
+    );
+    validateDimensions(width, height);
+    signal?.throwIfAborted();
+    const releaseReservation = repository.reserve(width * height, file.size);
+    let bitmap: ImageBitmap | undefined;
 
-    return id;
-  } finally {
-    bitmap?.close();
-    pendingPixels -= pixels;
-    pendingBytes -= file.size;
-  }
-}
+    try {
+      bitmap = await decode(file);
+      signal?.throwIfAborted();
+      validateDimensions(bitmap.width, bitmap.height);
+      const id = repository.register(bitmap, file, width * height);
+      bitmap = undefined;
 
-/**
- * 참조가 끝난 이미지 비트맵과 임시 URL을 해제합니다.
- */
-export function releaseUnused(used: Set<string>) {
-  for (const [id, resource] of resources) {
-    const isUsedImage = used.has(id);
-
-    if (isUsedImage) {
-      continue;
+      return id;
+    } finally {
+      bitmap?.close();
+      releaseReservation();
     }
-
-    resource.bitmap.close();
-    URL.revokeObjectURL(resource.url);
-    resources.delete(id);
   }
+
+  return {
+    getImage,
+    getSlideImage,
+    loadImage,
+    releaseUnused: repository.releaseUnused,
+  };
 }
+
+export const { getImage, getSlideImage, loadImage, releaseUnused } =
+  createImageService(imageRepository);

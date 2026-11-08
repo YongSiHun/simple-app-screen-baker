@@ -2,8 +2,10 @@ import type { OutputPreset, Project, Slide } from '../../editor/types/project';
 import { getImage, getSlideImage } from '../../editor/services/images.ts';
 import { render } from '../../rendering/services/render.ts';
 import { validatePreset } from '../utils/validatePreset.ts';
-import { encodeRgb } from './png.ts';
+import { encodeRgb } from '../data/png.ts';
 import { createExportPlan } from './plan.ts';
+import { save } from '../data/browserDownload.ts';
+export { save } from '../data/browserDownload.ts';
 /**
  * 현재 디자인과 슬라이드를 실제 크기의 RGB PNG로 렌더링합니다.
  */
@@ -44,20 +46,6 @@ export async function png(
     canvas.width = 1;
     canvas.height = 1;
   }
-}
-
-/**
- * 브라우저 다운로드를 시작하고 임시 파일 URL을 정리합니다.
- */
-export function save(data: Blob, filename: string) {
-  const url = URL.createObjectURL(data);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 
 /**

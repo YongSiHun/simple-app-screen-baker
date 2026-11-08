@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { SiteCredits } from '../../../core/components/SiteCredits';
 import { useProject } from '../store/useProject';
@@ -16,12 +17,21 @@ import { createExportPlan } from '../../export/services/plan';
  * 프로젝트 상태와 편집 화면의 주요 영역을 연결합니다.
  */
 export function EditorPage() {
-  const { project, selectedId, presetId, setPreset } = useProject();
+  const { project, selectedId, presetId, setPreset } = useProject(
+    useShallow((state) => ({
+      project: state.project,
+      selectedId: state.selectedId,
+      presetId: state.presetId,
+      setPreset: state.setPreset,
+    })),
+  );
   const [uploading, setUploading] = useState(false);
   const preset = PRESETS.find((preset) => preset.id === presetId)!;
   const slide = project.slides.find((slide) => slide.id === selectedId)!;
-  const plan = createExportPlan(project.slides, [preset], (id) =>
-    Boolean(getImage(id)),
+  const plan = useMemo(
+    () =>
+      createExportPlan(project.slides, [preset], (id) => Boolean(getImage(id))),
+    [project.slides, preset],
   );
   const currentImage = getSlideImage(slide, preset.device);
   const { progress, error, done, exporting, download, dismissDone } =

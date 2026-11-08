@@ -43,7 +43,7 @@ export function useScreenshotUpload(
     setError('');
 
     try {
-      const { ids, errors } = await readScreenshots(
+      const result = await readScreenshots(
         Array.from(files),
         controller.signal,
       );
@@ -53,33 +53,31 @@ export function useScreenshotUpload(
         return;
       }
 
-      const hasUploadedImages = ids.length > 0;
-      const hasUploadErrors = errors.length > 0;
-
-      if (hasUploadedImages) {
-        attach(ids, kind);
-      }
-
-      if (hasUploadErrors) {
-        setError(errors.join(' '));
-      }
+      attach(result.ids, kind);
+      setError(result.errors.join(' '));
     } finally {
       useProject.getState().collectImages();
       uploadController.current = null;
-      const isActive = !controller.signal.aborted;
-
-      if (isActive) {
-        setBusy(false);
-        onUploading(false);
-      }
-
-      const inputElement = input.current;
-      const hasInput = inputElement !== null;
-
-      if (hasInput) {
-        inputElement.value = '';
-      }
+      resetUpload(controller.signal);
     }
+  }
+
+  function resetUpload(signal: AbortSignal) {
+    const inputElement = input.current;
+    const hasInput = inputElement !== null;
+
+    if (hasInput) {
+      inputElement.value = '';
+    }
+
+    const isCancelled = signal.aborted;
+
+    if (isCancelled) {
+      return;
+    }
+
+    setBusy(false);
+    onUploading(false);
   }
 
   return { input, drag, setDrag, busy, error, upload };

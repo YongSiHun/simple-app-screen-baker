@@ -1,4 +1,4 @@
-import { encodeRgb } from '../../src/features/export/services/png.ts';
+import { encodeRgb } from '../../src/features/export/data/png.ts';
 
 /** Create a real PNG while browser bitmap decoding is mocked in Node tests. */
 export async function pngFile(name = 'image.png', width = 10, height = 20) {

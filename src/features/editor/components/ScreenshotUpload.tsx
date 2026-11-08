@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import type { DeviceKind } from '../types/project';
 import type { ScreenshotUploadProps } from '../types/components';
 import { useProject } from '../store/useProject';
@@ -42,13 +43,19 @@ export function ScreenshotUpload({
   preset,
   onUploading,
 }: ScreenshotUploadProps) {
-  const { project, selectedId } = useProject();
-  const slide = project.slides.find((slide) => slide.id === selectedId)!;
-  const image = getSlideImage(slide, kind);
+  const { design, images } = useProject(
+    useShallow((state) => ({
+      design: state.project.design,
+      images: state.project.slides.find(
+        (slide) => slide.id === state.selectedId,
+      )!.images,
+    })),
+  );
+  const image = getSlideImage({ images }, kind);
   const { frame, screen, aspect } = deviceGeometry(
     preset.width,
     preset.height,
-    project.design,
+    design,
     kind,
   );
   const source = image?.bitmap ?? aspect;
@@ -65,7 +72,7 @@ export function ScreenshotUpload({
         <span>01</span> 앱 스크린샷
       </h3>
       <button
-        className={'upload-zone ' + (drag ? 'dragging' : '')}
+        className={drag ? 'upload-zone dragging' : 'upload-zone'}
         disabled={busy}
         onClick={() => input.current?.click()}
         onDragOver={(e) => {
@@ -82,7 +89,7 @@ export function ScreenshotUpload({
         <span className="upload-icon">
           <Icon name="upload" size={23} />
         </span>
-        <b>{busy ? '이미지 읽는 중…' : '클릭 또는 드래그하여 업로드'}</b>
+        <UploadLabel busy={busy} />
         <span className="upload-recommendation">
           <span>{labels[frame]} 첨부 이미지 권장 해상도</span>
           <strong>
@@ -119,4 +126,8 @@ export function ScreenshotUpload({
       )}
     </section>
   );
+}
+
+function UploadLabel({ busy }: { busy: boolean }) {
+  return <b>{busy ? '이미지 읽는 중…' : '클릭 또는 드래그하여 업로드'}</b>;
 }

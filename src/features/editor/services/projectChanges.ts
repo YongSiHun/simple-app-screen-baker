@@ -154,9 +154,7 @@ export function updatePosition(
 ): Partial<ProjectSnapshot> {
   const current = state.project.slides.find((slide) => slide.id === id)
     ?.positions?.[element];
-  const isUnchanged =
-    (current?.x ?? 0) === (position?.x ?? 0) &&
-    (current?.y ?? 0) === (position?.y ?? 0);
+  const isUnchanged = samePosition(current, position);
 
   if (isUnchanged) {
     return {};
@@ -197,30 +195,11 @@ export function attachScreenshots(
   }
 
   const slides = [...state.project.slides];
-  ids.forEach((imageId, index) => {
-    const isFirstImage = index === 0;
-
-    if (isFirstImage) {
-      const selectedIndex = slides.findIndex(
-        (slide) => slide.id === state.selectedId,
-      );
-      const hasSelectedSlide = selectedIndex >= 0;
-
-      if (hasSelectedSlide) {
-        const selectedSlide = slides[selectedIndex];
-        slides[selectedIndex] = {
-          ...selectedSlide,
-          images: { ...selectedSlide.images, [kind]: imageId },
-        };
-      }
-
-      return;
-    }
-
-    const slide = createSlide();
-    slide.images[kind] = imageId;
-    slides.push(slide);
-  });
+  attachToSelected(slides, state.selectedId, ids[0], kind);
+  const additions = ids
+    .slice(1)
+    .map((imageId) => ({ ...createSlide(), images: { [kind]: imageId } }));
+  slides.push(...additions);
 
   return { project: { ...state.project, slides } };
 }
@@ -295,4 +274,28 @@ export function moveSlide(
   ];
 
   return { project: { ...state.project, slides } };
+}
+
+function samePosition(current?: ElementPosition, next?: ElementPosition) {
+  const x = current?.x ?? 0;
+  const y = current?.y ?? 0;
+
+  return x === (next?.x ?? 0) && y === (next?.y ?? 0);
+}
+
+function attachToSelected(
+  slides: Slide[],
+  selectedId: string,
+  imageId: string,
+  kind: DeviceKind,
+) {
+  const index = slides.findIndex((slide) => slide.id === selectedId);
+  const hasNoSelectedSlide = index < 0;
+
+  if (hasNoSelectedSlide) {
+    return;
+  }
+
+  const slide = slides[index];
+  slides[index] = { ...slide, images: { ...slide.images, [kind]: imageId } };
 }

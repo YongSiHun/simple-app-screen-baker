@@ -38,6 +38,54 @@ export default ts.config(
       ],
     },
   },
+  {
+    files: ['src/**/*.{ts,tsx}', 'scripts/**/*.mjs', '*.{js,ts}'],
+    rules: {
+      'readability/cognitive-complexity': ['error', { max: 5 }],
+      'readability/no-nested-control-flow': 'error',
+    },
+  },
+  {
+    files: ['src/**/{components,screens,hooks,store}/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-imports': ['error', { patterns: ['**/data/**'] }] },
+  },
+  {
+    files: ['src/**/data/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            '**/components/**',
+            '**/screens/**',
+            '**/hooks/**',
+            '**/store/**',
+            '**/services/**',
+            'react',
+            'zustand',
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/**/services/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            '**/components/**',
+            '**/screens/**',
+            '**/hooks/**',
+            '**/store/**',
+            'react',
+            'zustand',
+          ],
+        },
+      ],
+    },
+  },
   { files: ['**/*.{js,mjs}'], languageOptions: { globals: globals.node } },
   {
     files: ['**/*.{ts,tsx}'],

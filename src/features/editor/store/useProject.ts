@@ -7,7 +7,7 @@ import {
 } from '../constants/defaults.ts';
 import type { ProjectState } from '../types/store';
 import { releaseUnused } from '../services/images.ts';
-import * as changes from '../utils/projectChanges.ts';
+import * as changes from '../services/projectChanges.ts';
 import {
   snapshot,
   usedImageIds,
@@ -16,9 +16,9 @@ import {
   cancelHistoryEdit,
   undoHistoryEdit,
   redoHistoryEdit,
-} from './projectHistory.ts';
+} from '../services/projectHistory.ts';
 import type { ProjectHistory, ProjectSnapshot } from '../types/history';
-export { usedImageIds } from './projectHistory.ts';
+export { usedImageIds } from '../services/projectHistory.ts';
 /**
  * 현재 프로젝트와 편집 이력에서 사용하지 않는 이미지를 해제합니다.
  */

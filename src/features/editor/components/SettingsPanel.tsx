@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { ScreenshotUpload } from './ScreenshotUpload';
 import {
   TemplateSettings,
@@ -8,7 +9,7 @@ import type { SettingsPanelProps } from '../types/components';
 /**
  * 업로드·템플릿·문구·스타일 설정을 구성합니다.
  */
-export function SettingsPanel({
+export const SettingsPanel = memo(function SettingsPanel({
   kind,
   preset,
   onUploading,
@@ -25,4 +26,4 @@ export function SettingsPanel({
       <StyleSettings kind={kind} />
     </aside>
   );
-}
+});

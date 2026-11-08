@@ -29,43 +29,63 @@ function readChunk(
   };
 }
 
-function chunkDimensions(
-  { bytes, view }: ImageHeader,
+type ChunkReader = (
+  header: ImageHeader,
   chunk: WebpChunk,
-): ImageSize | undefined {
-  const { type, length, dataOffset: data } = chunk;
-  const isExtended = type === WEBP_CHUNKS.extended && length >= 10;
+) => ImageSize | undefined;
 
-  if (isExtended) {
-    return {
-      width:
-        1 + bytes[data + 4] + (bytes[data + 5] << 8) + (bytes[data + 6] << 16),
-      height:
-        1 + bytes[data + 7] + (bytes[data + 8] << 8) + (bytes[data + 9] << 16),
-    };
+const readExtended: ChunkReader = ({ bytes }, { length, dataOffset: data }) => {
+  const isTruncated = length < 10;
+
+  if (isTruncated) {
+    return;
   }
 
-  const isLossless =
-    type === WEBP_CHUNKS.lossless && length >= 5 && bytes[data] === 0x2f;
+  return {
+    width:
+      1 + bytes[data + 4] + (bytes[data + 5] << 8) + (bytes[data + 6] << 16),
+    height:
+      1 + bytes[data + 7] + (bytes[data + 8] << 8) + (bytes[data + 9] << 16),
+  };
+};
 
-  if (isLossless) {
-    const bits = view.getUint32(data + 1, true);
+const readLossless: ChunkReader = (
+  { bytes, view },
+  { length, dataOffset: data },
+) => {
+  const isInvalid = length < 5 || bytes[data] !== 0x2f;
 
-    return { width: (bits & 0x3fff) + 1, height: ((bits >>> 14) & 0x3fff) + 1 };
+  if (isInvalid) {
+    return;
   }
 
-  const isLossy =
-    type === WEBP_CHUNKS.lossy &&
-    length >= 10 &&
-    matchesSignature(bytes, data + 3, VP8_FRAME_SIGNATURE);
+  const bits = view.getUint32(data + 1, true);
 
-  if (isLossy) {
-    return {
-      width: view.getUint16(data + 6, true) & 0x3fff,
-      height: view.getUint16(data + 8, true) & 0x3fff,
-    };
+  return { width: (bits & 0x3fff) + 1, height: ((bits >>> 14) & 0x3fff) + 1 };
+};
+
+const readLossy: ChunkReader = (
+  { bytes, view },
+  { length, dataOffset: data },
+) => {
+  const isInvalid =
+    length < 10 || !matchesSignature(bytes, data + 3, VP8_FRAME_SIGNATURE);
+
+  if (isInvalid) {
+    return;
   }
-}
+
+  return {
+    width: view.getUint16(data + 6, true) & 0x3fff,
+    height: view.getUint16(data + 8, true) & 0x3fff,
+  };
+};
+
+const chunkReaders = new Map<number, ChunkReader>([
+  [WEBP_CHUNKS.extended, readExtended],
+  [WEBP_CHUNKS.lossless, readLossless],
+  [WEBP_CHUNKS.lossy, readLossy],
+]);
 
 export function webpDimensions(header: ImageHeader): ImageSize | undefined {
   const { bytes, view } = header;
@@ -80,6 +100,11 @@ export function webpDimensions(header: ImageHeader): ImageSize | undefined {
     return;
   }
 
+  return readChunks(header);
+}
+
+function readChunks(header: ImageHeader): ImageSize | undefined {
+  const { bytes } = header;
   let offset = 12;
 
   while (offset + 8 <= bytes.length) {
@@ -90,7 +115,7 @@ export function webpDimensions(header: ImageHeader): ImageSize | undefined {
       return;
     }
 
-    const dimensions = chunkDimensions(header, chunk);
+    const dimensions = chunkReaders.get(chunk.type)?.(header, chunk);
     const hasDimensions = dimensions !== undefined;
 
     if (hasDimensions) {

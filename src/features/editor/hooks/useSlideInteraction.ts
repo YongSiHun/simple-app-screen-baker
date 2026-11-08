@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useRef, useState } from 'react';
 import type { PointerEvent, KeyboardEvent } from 'react';
 import type {
@@ -23,7 +24,14 @@ export function useSlideInteraction(
   const surface = useRef<HTMLDivElement>(null);
   const drag = useRef<SlideDragState | null>(null);
   const dragged = useRef(false);
-  const { position, beginEdit, endEdit, cancelEdit } = useProject();
+  const { position, beginEdit, endEdit, cancelEdit } = useProject(
+    useShallow((state) => ({
+      position: state.position,
+      beginEdit: state.beginEdit,
+      endEdit: state.endEdit,
+      cancelEdit: state.cancelEdit,
+    })),
+  );
   const [selection, setSelection] = useState<SlideSelection | null>(null);
   const selected = selection?.slideId === slide.id ? selection.element : null;
   const frame = resolveFrame(design.frame, preset.device);
@@ -197,10 +205,7 @@ export function useSlideInteraction(
       return;
     }
 
-    const shouldCancelDrag =
-      (event.ctrlKey || event.metaKey) &&
-      event.key.toLowerCase() === 'z' &&
-      drag.current !== null;
+    const shouldCancelDrag = isDragUndo(event, drag.current !== null);
 
     if (shouldCancelDrag) {
       event.preventDefault();
@@ -247,4 +252,13 @@ export function useSlideInteraction(
     keyMove,
     finishDrag,
   };
+}
+
+function isDragUndo(
+  event: KeyboardEvent<HTMLButtonElement>,
+  dragging: boolean,
+) {
+  const hasModifier = event.ctrlKey || event.metaKey;
+
+  return hasModifier && event.key.toLowerCase() === 'z' && dragging;
 }

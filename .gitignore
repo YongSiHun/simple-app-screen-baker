@@ -39,6 +39,3 @@ Desktop.ini
 *.swp
 *.swo
 *~
-
-# Local development documentation
-/docs/

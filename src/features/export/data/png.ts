@@ -35,35 +35,39 @@ function chunk(type: string, data: Uint8Array) {
 /**
  * 불투명 RGBA 픽셀을 PNG용 RGB 스캔라인으로 변환합니다.
  */
-function createRgbScanlines(width: number, height: number, rgba: RgbaPixels) {
-  const hasInvalidPixels =
-    !Number.isInteger(width) ||
-    !Number.isInteger(height) ||
-    width <= 0 ||
-    height <= 0 ||
-    rgba.length !== width * height * 4;
+function validatePixels(width: number, height: number, rgba: RgbaPixels) {
+  const dimensions = [width, height];
+  const validSize = dimensions.every(
+    (size) => Number.isInteger(size) && size > 0,
+  );
+  const hasInvalidPixels = !validSize || rgba.length !== width * height * 4;
 
   if (hasInvalidPixels) {
     throw new Error('잘못된 픽셀 데이터입니다.');
   }
+}
 
-  const rowLength = width * 3 + 1;
-  const raw = new Uint8Array(rowLength * height);
+function createRgbScanlines(width: number, height: number, rgba: RgbaPixels) {
+  validatePixels(width, height, rgba);
+  const raw = new Uint8Array((width * 3 + 1) * height);
+  let target = 1;
+  let rowEnd = width * 4;
 
-  for (let y = 0; y < height; y++) {
-    let targetIndex = y * rowLength + 1;
+  for (let source = 0; source < rgba.length; source += 4) {
+    const hasTransparency = rgba[source + 3] !== 255;
 
-    for (let x = 0; x < width; x++) {
-      const sourceIndex = (y * width + x) * 4;
-      const hasTransparency = rgba[sourceIndex + 3] !== 255;
+    if (hasTransparency) {
+      throw new Error('출력에 투명 픽셀이 있습니다.');
+    }
 
-      if (hasTransparency) {
-        throw new Error('출력에 투명 픽셀이 있습니다.');
-      }
+    raw[target++] = rgba[source];
+    raw[target++] = rgba[source + 1];
+    raw[target++] = rgba[source + 2];
+    const isRowEnd = source + 4 === rowEnd;
 
-      raw[targetIndex++] = rgba[sourceIndex];
-      raw[targetIndex++] = rgba[sourceIndex + 1];
-      raw[targetIndex++] = rgba[sourceIndex + 2];
+    if (isRowEnd) {
+      target++;
+      rowEnd += width * 4;
     }
   }
 
@@ -149,15 +153,26 @@ function validateHeader(
   width: number,
   height: number,
 ) {
+  const hasSignature = PNG_SIGNATURE.every(
+    (byte, index) => bytes[index] === byte,
+  );
+  const hasInvalidLength = bytes.length < 33;
+
+  if (hasInvalidLength) {
+    throw new Error('PNG 규격 검증 실패: RGB 24-bit PNG가 아닙니다.');
+  }
+
+  const expectedFields = [
+    [8, 13],
+    [12, PNG_CHUNK.header],
+    [16, width],
+    [20, height],
+  ];
+  const fieldsMatch = expectedFields.every(
+    ([offset, value]) => view.getUint32(offset) === value,
+  );
   const hasInvalidHeader =
-    bytes.length < 33 ||
-    !PNG_SIGNATURE.every((byte, index) => bytes[index] === byte) ||
-    view.getUint32(8) !== 13 ||
-    view.getUint32(12) !== PNG_CHUNK.header ||
-    view.getUint32(16) !== width ||
-    view.getUint32(20) !== height ||
-    bytes[24] !== 8 ||
-    bytes[25] !== 2;
+    !hasSignature || !fieldsMatch || bytes[24] !== 8 || bytes[25] !== 2;
 
   if (hasInvalidHeader) {
     throw new Error('PNG 규격 검증 실패: RGB 24-bit PNG가 아닙니다.');

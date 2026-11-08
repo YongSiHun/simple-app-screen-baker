@@ -9,7 +9,7 @@ import {
 } from '../src/features/editor/services/images.ts';
 import { exportZip, png } from '../src/features/export/services/export.ts';
 import { PRESETS } from '../src/features/export/constants/presets.ts';
-import { verifyPng } from '../src/features/export/services/png.ts';
+import { verifyPng } from '../src/features/export/data/png.ts';
 
 it('keeps the complete project and selection when switching devices', () => {
   const initial = useProject.getState();

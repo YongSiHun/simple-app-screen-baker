@@ -12,5 +12,3 @@ package-lock.json
 yarn.lock
 *.tsbuildinfo
 *.log
-docs/
-README.md

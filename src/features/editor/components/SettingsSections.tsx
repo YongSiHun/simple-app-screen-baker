@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { BACKGROUND_SWATCHES } from '../constants/defaults';
 import { useProject } from '../store/useProject';
 import type { ProjectDesign } from '../types/project';
@@ -8,8 +9,12 @@ import type { DeviceKindProps } from '../types/components';
  * 프로젝트에 적용할 템플릿을 선택합니다.
  */
 export function TemplateSettings() {
-  const { project, design } = useProject();
-  const currentDesign = project.design;
+  const { currentDesign, design } = useProject(
+    useShallow((state) => ({
+      currentDesign: state.project.design,
+      design: state.design,
+    })),
+  );
 
   return (
     <section>
@@ -44,8 +49,20 @@ export function TemplateSettings() {
  * 현재 슬라이드의 제목과 부제목을 편집합니다.
  */
 export function TextSettings() {
-  const { project, selectedId, text } = useProject();
-  const slide = project.slides.find((slide) => slide.id === selectedId)!;
+  const { id, title, subtitle, text } = useProject(
+    useShallow((state) => {
+      const slide = state.project.slides.find(
+        (slide) => slide.id === state.selectedId,
+      )!;
+
+      return {
+        id: slide.id,
+        title: slide.title,
+        subtitle: slide.subtitle,
+        text: state.text,
+      };
+    }),
+  );
 
   return (
     <section>
@@ -53,26 +70,26 @@ export function TextSettings() {
         <span>03</span> 메시지
       </h3>
       <label className="field">
-        제목 <span>{slide.title.length}/120</span>
+        제목 <span>{title.length}/120</span>
         <textarea
           rows={2}
           onFocus={() => useProject.getState().beginEdit()}
           onBlur={() => useProject.getState().endEdit()}
           maxLength={120}
-          value={slide.title}
-          onChange={(e) => text(slide.id, { title: e.target.value })}
+          value={title}
+          onChange={(e) => text(id, { title: e.target.value })}
         />
       </label>
       <label className="field">
-        부제목 <span>{slide.subtitle.length}/180</span>
+        부제목 <span>{subtitle.length}/180</span>
         <textarea
           rows={2}
           onFocus={() => useProject.getState().beginEdit()}
           onBlur={() => useProject.getState().endEdit()}
           maxLength={180}
-          value={slide.subtitle}
+          value={subtitle}
           placeholder="앱의 가치를 한 문장으로 소개하세요"
-          onChange={(e) => text(slide.id, { subtitle: e.target.value })}
+          onChange={(e) => text(id, { subtitle: e.target.value })}
         />
       </label>
       <p className="field-help">
@@ -86,8 +103,12 @@ export function TextSettings() {
  * 색상·글꼴·기기 프레임 설정을 표시합니다.
  */
 export function StyleSettings({ kind }: DeviceKindProps) {
-  const { project, design } = useProject();
-  const currentDesign = project.design;
+  const { currentDesign, design } = useProject(
+    useShallow((state) => ({
+      currentDesign: state.project.design,
+      design: state.design,
+    })),
+  );
 
   return (
     <section>

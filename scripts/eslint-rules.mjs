@@ -1,5 +1,8 @@
+import { cognitiveComplexity, noNestedControl } from './complexity-rules.mjs';
 export const readabilityRules = {
   rules: {
+    'cognitive-complexity': cognitiveComplexity,
+    'no-nested-control-flow': noNestedControl,
     'named-boolean-condition': {
       meta: {
         type: 'suggestion',

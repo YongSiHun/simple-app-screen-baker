@@ -12,12 +12,7 @@ export function siteOrigin(value) {
 
   const url = new URL(value);
   const valid =
-    url.protocol === 'https:' &&
-    url.pathname === '/' &&
-    !url.search &&
-    !url.hash &&
-    !url.username &&
-    !url.password;
+    url.protocol === 'https:' && url.pathname === '/' && hasNoUrlExtras(url);
 
   const isInvalid = !valid;
 
@@ -75,4 +70,8 @@ export function siteHtml() {
       };
     },
   };
+}
+
+function hasNoUrlExtras(url) {
+  return ![url.search, url.hash, url.username, url.password].some(Boolean);
 }

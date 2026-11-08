@@ -1,4 +1,4 @@
-import { PAGE_DESCRIPTIONS, PAGE_TITLES } from './constants/pages';
+import { syncPageMetadata } from './services/pageMetadata';
 import {
   createBrowserRouter,
   Link,
@@ -10,7 +10,6 @@ import { useEffect } from 'react';
 import { SiteLayout } from '../core/components/SiteLayout';
 import { EditorPage } from '../features/editor/screens/EditorPage';
 import { INFO_ROUTES } from '../features/info/routes';
-import { structuredDataJson } from '../features/info/structuredData';
 /**
  * 경로가 바뀌면 페이지 제목과 스크롤 위치를 갱신합니다.
  */
@@ -21,54 +20,14 @@ function Root() {
 
     if (target) {
       target.scrollIntoView();
-    } else {
-      window.scrollTo(0, 0);
+
+      return;
     }
+
+    window.scrollTo(0, 0);
   }, [pathname, hash]);
   useEffect(() => {
-    const pagePath = pathname.replace(/\/+$/, '') || '/';
-
-    document.title =
-      (PAGE_TITLES[pagePath] ?? '앱 스크린샷을 가장 간단하게') +
-      ' | Simple App Screen Baker';
-    const description = PAGE_DESCRIPTIONS[pagePath] ?? PAGE_DESCRIPTIONS['/'];
-    document
-      .querySelector('meta[name="description"]')
-      ?.setAttribute('content', description);
-    document
-      .querySelector('meta[property="og:title"]')
-      ?.setAttribute('content', document.title);
-    document
-      .querySelector('meta[property="og:description"]')
-      ?.setAttribute('content', description);
-    const canonical = document.querySelector<HTMLLinkElement>(
-      'link[rel="canonical"]',
-    );
-
-    document.getElementById('page-structured-data')?.remove();
-
-    if (canonical) {
-      const url = new URL(
-        pagePath === '/editor' ? '/' : pagePath,
-        canonical.href,
-      ).href;
-      canonical.href = url;
-      document
-        .querySelector('meta[property="og:url"]')
-        ?.setAttribute('content', url);
-      const json = structuredDataJson(
-        pagePath === '/editor' ? '/' : pagePath,
-        new URL(url).origin,
-      );
-
-      if (json) {
-        const script = document.createElement('script');
-        script.id = 'page-structured-data';
-        script.type = 'application/ld+json';
-        script.textContent = json;
-        document.head.append(script);
-      }
-    }
+    syncPageMetadata(pathname);
   }, [pathname]);
 
   return <Outlet />;

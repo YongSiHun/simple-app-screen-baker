@@ -18,7 +18,7 @@ import {
   encodeRgb,
   verifyPng,
   crc32,
-} from '../src/features/export/services/png.ts';
+} from '../src/features/export/data/png.ts';
 describe('aspect-preserving layout', () => {
   it('contains a portrait without distortion', () => {
     assert.deepEqual(

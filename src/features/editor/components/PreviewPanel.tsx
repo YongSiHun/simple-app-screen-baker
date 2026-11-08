@@ -1,16 +1,15 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useEffect, useState } from 'react';
 import { DEVICE_LABELS } from '../constants/devices';
 import type { PreviewPanelProps } from '../types/components';
 import { useProject } from '../store/useProject';
 import { ResetPositionsDialog } from './ResetPositionsDialog';
 import { PreviewToolbar } from './PreviewToolbar';
-import { PreviewTextEditor } from './PreviewTextEditor';
+import { PreviewElements } from './PreviewElements';
+import { PreviewTextOverlay } from './PreviewTextOverlay';
+import { PreviewFeedback } from './PreviewFeedback';
 import type { SlideSelection } from '../types/interaction';
-import {
-  SLIDE_ELEMENTS,
-  ELEMENT_LABELS,
-  PREVIEW_DEFAULT_ZOOM,
-} from '../constants/preview';
+import { PREVIEW_DEFAULT_ZOOM } from '../constants/preview';
 import { usePreviewSize } from '../hooks/usePreviewSize';
 import { usePreviewCanvas } from '../hooks/usePreviewCanvas';
 import { useSlideInteraction } from '../hooks/useSlideInteraction';
@@ -25,7 +24,15 @@ export function PreviewPanel({
   slide,
   disabled = false,
 }: PreviewPanelProps) {
-  const { resetPositions, undo, redo, past, future } = useProject();
+  const { resetPositions, undo, redo, canUndo, canRedo } = useProject(
+    useShallow((state) => ({
+      resetPositions: state.resetPositions,
+      undo: state.undo,
+      redo: state.redo,
+      canUndo: state.past.length > 0,
+      canRedo: state.future.length > 0,
+    })),
+  );
   const [resetOpen, setResetOpen] = useState(false);
   const [editing, setEditing] = useState<SlideSelection | null>(null);
   const editingElement = editing?.slideId === slide.id ? editing.element : null;
@@ -41,17 +48,8 @@ export function PreviewPanel({
     slide,
     zoom,
   );
-  const {
-    surface,
-    dragged,
-    selected,
-    setSelection,
-    startMove,
-    move,
-    endMove,
-    keyMove,
-    finishDrag,
-  } = useSlideInteraction(preset, design, slide, disabled);
+  const interaction = useSlideInteraction(preset, design, slide, disabled);
+  const { surface, selected, setSelection, keyMove } = interaction;
   const hasPositions = Object.values(slide.positions ?? {}).some(
     (value) => value && (value.x !== 0 || value.y !== 0),
   );
@@ -78,8 +76,8 @@ export function PreviewPanel({
         keyMove={keyMove}
         zoom={zoom}
         setZoom={setZoom}
-        canUndo={past.length > 0}
-        canRedo={future.length > 0}
+        canUndo={canUndo}
+        canRedo={canRedo}
         hasPositions={hasPositions}
         undo={undo}
         redo={redo}
@@ -104,9 +102,7 @@ export function PreviewPanel({
       </p>
       <div
         ref={stage}
-        className={
-          'canvas-stage ' + (preset.orientation === 'landscape' ? 'wide' : '')
-        }
+        className={stageClassName(preset.orientation)}
         onPointerDown={(e) => {
           const isBackgroundClick = e.target === e.currentTarget;
 
@@ -145,102 +141,42 @@ export function PreviewPanel({
             <canvas
               ref={ref}
               aria-label={slide.title + ' · ' + frameName + ' 미리보기'}
-              style={{ visibility: !ready || error ? 'hidden' : 'visible' }}
+              style={{ visibility: canvasVisibility(ready, error) }}
             />
-            {ready &&
-              !error &&
-              SLIDE_ELEMENTS.map((element) => {
-                const box = boxes[element];
-
-                return (
-                  <button
-                    key={element}
-                    type="button"
-                    className={
-                      'preview-element element-' +
-                      element +
-                      (selected === element ? ' selected' : '')
-                    }
-                    aria-label={
-                      ELEMENT_LABELS[element] +
-                      (element === 'device' ? ' 이동' : ' 편집 및 이동')
-                    }
-                    aria-pressed={selected === element}
-                    aria-describedby="preview-move-help"
-                    disabled={disabled}
-                    style={{
-                      visibility:
-                        editingElement === element ? 'hidden' : undefined,
-                      left: (box.x / preset.width) * 100 + '%',
-                      top: (box.y / preset.height) * 100 + '%',
-                      width: (box.width / preset.width) * 100 + '%',
-                      height: (box.height / preset.height) * 100 + '%',
-                    }}
-                    onClick={(event) => {
-                      setSelection({ slideId: slide.id, element });
-                      const shouldEdit =
-                        element !== 'device' &&
-                        (event.detail === 0 || !dragged.current);
-
-                      if (shouldEdit) {
-                        setEditing({ slideId: slide.id, element });
-                      }
-                    }}
-                    onFocus={() => setSelection({ slideId: slide.id, element })}
-                    onPointerDown={(e) => startMove(e, element)}
-                    onPointerMove={move}
-                    onPointerUp={(e) => endMove(e)}
-                    onPointerCancel={(e) => endMove(e, true)}
-                    onLostPointerCapture={finishDrag}
-                    onKeyDown={(e) => keyMove(e, element)}
-                  >
-                    <span aria-hidden="true">{ELEMENT_LABELS[element]}</span>
-                  </button>
-                );
-              })}
-            {!disabled &&
-              (editingElement === 'title' || editingElement === 'subtitle') && (
-                <PreviewTextEditor
-                  key={slide.id + ':' + editingElement}
-                  slide={slide}
-                  element={editingElement}
-                  design={design}
-                  onClose={() => setEditing(null)}
-                  style={{
-                    left: (boxes[editingElement].x / preset.width) * 100 + '%',
-                    top: (boxes[editingElement].y / preset.height) * 100 + '%',
-                    width:
-                      (boxes[editingElement].width / preset.width) * 100 + '%',
-                    height:
-                      (boxes[editingElement].height / preset.height) * 100 +
-                      '%',
-                    fontSize:
-                      size.width *
-                      zoom *
-                      (editingElement === 'title'
-                        ? boxes.landscape
-                          ? 0.041
-                          : 0.075
-                        : boxes.landscape
-                          ? 0.018
-                          : 0.033),
-                    textAlign: boxes.landscape ? 'left' : 'center',
-                  }}
-                />
-              )}
+            {ready && !error && (
+              <PreviewElements
+                preset={preset}
+                boxes={boxes}
+                interaction={interaction}
+                slideId={slide.id}
+                editingElement={editingElement}
+                disabled={disabled}
+                setEditing={setEditing}
+              />
+            )}
+            <PreviewTextOverlay
+              slide={slide}
+              design={design}
+              preset={preset}
+              boxes={boxes}
+              width={size.width}
+              zoom={zoom}
+              editingElement={editingElement}
+              disabled={disabled}
+              onClose={() => setEditing(null)}
+            />
           </div>
         </div>
-        {loading && !ready && (
-          <span className="preview-loading" role="status">
-            미리보기 갱신 중…
-          </span>
-        )}
-        {error && (
-          <p className="preview-error" role="alert">
-            {error}
-          </p>
-        )}
+        <PreviewFeedback loading={loading} ready={ready} error={error} />
       </div>
     </section>
   );
+}
+
+function canvasVisibility(ready: boolean, error: string) {
+  return !ready || error ? 'hidden' : 'visible';
+}
+
+function stageClassName(orientation: string) {
+  return 'canvas-stage ' + (orientation === 'landscape' ? 'wide' : '');
 }
