@@ -1,7 +1,5 @@
 let fontPromise: Promise<void> | undefined;
-/**
- * 렌더링에 필요한 글꼴을 한 번만 읽고 준비 상태를 확인합니다.
- */
+/** 렌더 폰트 1회 로드·가용성 검증 */
 export function ensureFont() {
   fontPromise ??= (async () => {
     await Promise.all([

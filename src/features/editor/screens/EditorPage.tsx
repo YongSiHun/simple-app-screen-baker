@@ -13,9 +13,7 @@ import { useEditorDownload } from '../hooks/useEditorDownload';
 import { useHistoryShortcuts } from '../hooks/useHistoryShortcuts';
 import { getImage, getSlideImage } from '../services/images';
 import { createExportPlan } from '../../export/services/plan';
-/**
- * 프로젝트 상태와 편집 화면의 주요 영역을 연결합니다.
- */
+/** 프로젝트 상태·편집 UI 연결 */
 export function EditorPage() {
   const { project, selectedId, presetId, setPreset } = useProject(
     useShallow((state) => ({

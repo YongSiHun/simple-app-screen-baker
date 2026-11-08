@@ -80,9 +80,7 @@ describe('aspect-preserving layout', () => {
   });
 });
 describe('text wrapping and fitting', () => {
-  /**
-   * 텍스트 배치 테스트를 위한 고정 폭을 계산합니다.
-   */
+  /** 텍스트 배치용 고정 폭 */
   const measure = (t) => Array.from(t).length * 10;
   it('wraps Korean text', () =>
     assert.deepEqual(wrapText('가나다라마', 20, measure), [
@@ -240,9 +238,7 @@ describe('device frames for batch export', () => {
 });
 
 describe('ZIP export planning', () => {
-  /**
-   * 테스트용 슬라이드 데이터를 준비합니다.
-   */
+  /** 슬라이드 fixture */
   const slide = (id, images) => ({ id, images, title: id, subtitle: '' });
   it('exports all seven presets from one phone image', () => {
     const plan = createExportPlan(
@@ -408,9 +404,7 @@ describe('shared screenshot selection', () => {
 });
 
 describe('manual frame to automatic rendering', () => {
-  /**
-   * 렌더링 명령을 기록하는 테스트용 캔버스를 만듭니다.
-   */
+  /** 렌더 명령 기록용 캔버스 */
   function recordingCanvas() {
     let calls = [];
     let width = 300;
@@ -448,18 +442,14 @@ describe('manual frame to automatic rendering', () => {
         height = value;
         calls = [];
       },
-      /**
-       * 테스트에서 사용하는 그리기 컨텍스트를 반환합니다.
-       */
+      /** 테스트용 ctx 반환 */
       getContext() {
         return ctx;
       },
     };
 
     return {
-      canvas /**
-       * 실행 취소에 필요한 프로젝트와 선택 상태를 보관합니다.
-       */,
+      canvas,
       snapshot: () => structuredClone(calls),
     };
   }

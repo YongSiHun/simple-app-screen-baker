@@ -11,9 +11,7 @@ import {
   recommendedImageSize,
   imageAspectRatio,
 } from '../../rendering/utils/deviceGeometry';
-/**
- * 이미지 재사용 여부에 맞는 업로드 안내 문구를 만듭니다.
- */
+/** 이미지 재사용별 업로드 안내 */
 function uploadHint(image: ReturnType<typeof getSlideImage>, kind: DeviceKind) {
   const hasNoImage = image === undefined;
 
@@ -35,9 +33,7 @@ function uploadHint(image: ReturnType<typeof getSlideImage>, kind: DeviceKind) {
   return labels[kind] + ' 화면 교체 · 여러 장 선택 가능';
 }
 
-/**
- * 이미지 업로드 영역과 원본 권장 크기를 표시합니다.
- */
+/** 업로드 영역·원본 권장 크기 */
 export function ScreenshotUpload({
   kind,
   preset,

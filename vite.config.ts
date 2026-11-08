@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     hmr: true,
     watch: {
-      // Enable polling only for file systems that cannot deliver change events.
+      // FS 변경 이벤트 미지원 시에만 폴링
       usePolling: process.env.VITE_USE_POLLING === 'true',
       interval: 300,
     },

@@ -1,8 +1,6 @@
 import { Link, NavLink, Outlet } from 'react-router';
 import { SiteCredits } from './SiteCredits';
-/**
- * 편집기로 돌아가는 브랜드 링크를 표시합니다.
- */
+/** 편집기 복귀 링크 */
 export function Brand() {
   return (
     <Link to="/" className="brand" aria-label="Simple App Screen Baker 홈">
@@ -17,9 +15,7 @@ export function Brand() {
   );
 }
 
-/**
- * 안내 페이지의 공통 헤더와 푸터를 구성합니다.
- */
+/** 안내 페이지 공통 헤더·푸터 */
 export function SiteLayout() {
   return (
     <>

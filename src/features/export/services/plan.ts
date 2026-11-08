@@ -2,9 +2,7 @@ import type { OutputPreset, Slide } from '../../editor/types/project';
 import type { ExportJob, ExportPlan } from '../types/plan';
 import { resolveSlideImage } from '../../editor/utils/resolveSlideImage.ts';
 
-/**
- * 기기별로 생성 가능한 이미지와 제외되는 슬라이드를 계산합니다.
- */
+/** 기기별 출력 가능·제외 수량 산출 */
 export function createExportPlan(
   slides: Slide[],
   presets: OutputPreset[],

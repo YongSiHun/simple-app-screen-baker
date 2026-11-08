@@ -1,14 +1,10 @@
 import { useEffect } from 'react';
 import { useProject } from '../store/useProject';
 import { historyShortcut } from '../utils/historyShortcut';
-/**
- * 텍스트 입력과 모달을 방해하지 않고 실행 취소 단축키를 연결합니다.
- */
+/** 텍스트·모달 제외 Undo/Redo 키 연결 */
 export function useHistoryShortcuts(disabled: boolean) {
   useEffect(() => {
-    /**
-     * 사용 가능한 실행 취소·다시 실행 단축키를 처리합니다.
-     */
+    /** Undo/Redo 단축키 처리 */
     function onKeyDown(event: KeyboardEvent) {
       const shouldIgnoreShortcut =
         event.defaultPrevented ||

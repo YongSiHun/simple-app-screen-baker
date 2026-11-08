@@ -1,9 +1,7 @@
 import type { OutputPreset } from '../../editor/types/project';
 import { PRESETS } from '../constants/presets.ts';
 
-/**
- * 플랫폼별 출력 크기와 방향이 지원 범위인지 검사합니다.
- */
+/** 플랫폼별 출력 크기·방향 검증 */
 export function validatePreset(p: OutputPreset): boolean {
   const hasInvalidDimensions =
     !Number.isInteger(p.width) || !Number.isInteger(p.height);

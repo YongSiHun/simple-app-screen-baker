@@ -5,9 +5,7 @@ import type { ProjectDesign } from '../types/project';
 import { TEMPLATES } from '../../templates/constants/templates';
 import { DEVICE_LABELS as labels } from '../constants/devices';
 import type { DeviceKindProps } from '../types/components';
-/**
- * 프로젝트에 적용할 템플릿을 선택합니다.
- */
+/** 공통 템플릿 선택 */
 export function TemplateSettings() {
   const { currentDesign, design } = useProject(
     useShallow((state) => ({
@@ -45,9 +43,7 @@ export function TemplateSettings() {
   );
 }
 
-/**
- * 현재 슬라이드의 제목과 부제목을 편집합니다.
- */
+/** 현재 제목·부제 편집 */
 export function TextSettings() {
   const { id, title, subtitle, text } = useProject(
     useShallow((state) => {
@@ -99,9 +95,7 @@ export function TextSettings() {
   );
 }
 
-/**
- * 색상·글꼴·기기 프레임 설정을 표시합니다.
- */
+/** 색상·폰트·프레임 설정 */
 export function StyleSettings({ kind }: DeviceKindProps) {
   const { currentDesign, design } = useProject(
     useShallow((state) => ({

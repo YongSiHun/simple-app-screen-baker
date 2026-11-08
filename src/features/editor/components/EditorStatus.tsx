@@ -1,7 +1,5 @@
 import type { EditorStatusProps } from '../types/components';
-/**
- * 편집 주의사항과 다운로드 진행 상태를 표시합니다.
- */
+/** 편집 안내·DL 상태 */
 export function EditorStatus({
   hasExportableSlides,
   missing,

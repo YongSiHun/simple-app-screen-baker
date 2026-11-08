@@ -3,9 +3,7 @@ import type { DeviceKind } from '../types/project';
 import { useProject } from '../store/useProject';
 import { readScreenshots } from '../services/readScreenshots.ts';
 import { MAX_UPLOAD_FILES } from '../constants/images.ts';
-/**
- * 업로드 입력과 드래그·진행·오류 상태를 관리합니다.
- */
+/** 업로드 입력·드래그·진행·오류 상태 */
 export function useScreenshotUpload(
   kind: DeviceKind,
   onUploading: (busy: boolean) => void,
@@ -17,9 +15,7 @@ export function useScreenshotUpload(
   const [error, setError] = useState('');
   const uploadController = useRef<AbortController | null>(null);
   useEffect(() => () => uploadController.current?.abort(), []);
-  /**
-   * 이미지를 슬라이드에 연결하고 업로드 리소스를 정리합니다.
-   */
+  /** 슬라이드 이미지 연결·리소스 해제 */
   async function upload(files: FileList | null) {
     const shouldSkipUpload =
       files === null || uploadController.current !== null;

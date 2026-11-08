@@ -1,4 +1,4 @@
-/** Browser decoder adapter: normalizes unsupported or corrupt file errors. */
+/** 브라우저 디코더 · 형식/손상 오류 정규화 */
 export async function decodeImage(file: File): Promise<ImageBitmap> {
   try {
     return await createImageBitmap(file);

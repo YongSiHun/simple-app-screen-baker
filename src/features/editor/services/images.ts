@@ -33,7 +33,7 @@ function validateFile(file: File) {
   }
 }
 
-/** Application workflow depends on resource/decoder ports, not their storage implementation. */
+/** 이미지 서비스 · 저장소/디코더 포트 주입 */
 export function createImageService(
   repository: ImageRepository,
   decode = decodeImage,

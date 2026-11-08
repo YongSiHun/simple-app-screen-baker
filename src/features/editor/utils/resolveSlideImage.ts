@@ -1,8 +1,6 @@
 import type { DeviceKind, Slide } from '../types/project';
 
-/**
- * 기기 전용 이미지를 우선하고 사용할 수 있는 다른 원본을 찾습니다.
- */
+/** 기기 전용 우선 · 가용 원본 폴백 */
 export function resolveSlideImage(
   slide: Pick<Slide, 'images'>,
   device: DeviceKind,

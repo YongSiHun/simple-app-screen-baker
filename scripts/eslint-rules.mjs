@@ -11,14 +11,10 @@ export const readabilityRules = {
           extractCondition: 'if 조건은 의미 있는 boolean 변수로 분리해주세요.',
         },
       },
-      /**
-       * 프로젝트의 가독성 린트 규칙을 등록합니다.
-       */
+      /** 가독성 룰 등록 */
       create(context) {
         return {
-          /**
-           * if 조건이 이름 있는 변수인지 검사합니다.
-           */
+          /** if 조건의 명명 변수 여부 검사 */
           IfStatement(node) {
             const usesNamedCondition = node.test.type === 'Identifier';
 

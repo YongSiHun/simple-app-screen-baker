@@ -1,6 +1,4 @@
-/**
- * 브라우저 다운로드를 시작하고 임시 파일 URL을 정리합니다.
- */
+/** 브라우저 DL·임시 URL 해제 */
 export function save(data: Blob, filename: string) {
   const url = URL.createObjectURL(data);
   const a = document.createElement('a');

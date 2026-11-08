@@ -5,9 +5,7 @@ import type {
   ElementPosition,
   Slide,
 } from '../../editor/types/project';
-/**
- * 원본 비율을 유지하며 지정한 사각형 안에 맞춥니다.
- */
+/** AR 유지 · 영역 내 맞춤 */
 export function contain(
   sourceWidth: number,
   sourceHeight: number,
@@ -23,10 +21,7 @@ export function contain(
   };
 }
 
-/**
- * 원본 비율을 유지하며 지정한 사각형을 빈틈없이 채웁니다.
- * 넘치는 영역은 기기 화면의 클리핑으로 중앙에서 잘립니다.
- */
+/** AR 유지 · 영역 채움·중앙 크롭 */
 export function cover(
   sourceWidth: number,
   sourceHeight: number,
@@ -42,7 +37,7 @@ export function cover(
   };
 }
 
-/** Build the horizontal layout with one shared text-column position. */
+/** 가로 배치 · 공통 텍스트 열 */
 function landscapeLayout(width: number, height: number, template: TemplateId) {
   const reverse = template === 'center';
   const pad = width * 0.075;
@@ -72,7 +67,7 @@ function landscapeLayout(width: number, height: number, template: TemplateId) {
   };
 }
 
-/** Build the vertical layout independently of horizontal placement. */
+/** 세로 배치 · 가로 위치와 독립 */
 function portraitLayout(
   width: number,
   height: number,
@@ -106,10 +101,8 @@ function portraitLayout(
   };
 }
 
-// Positions are proportions of the output size so edits survive device changes.
-/**
- * 상대 이동값을 적용하고 요소가 화면 밖으로 나가지 않게 제한합니다.
- */
+// 출력 비례 좌표 · 기기 변경 시 위치 유지
+/** 상대 좌표 적용·화면 경계 제한 */
 export function positionRect(
   rect: Rect,
   width: number,
@@ -129,9 +122,7 @@ export function positionRect(
   };
 }
 
-/**
- * 화면 이동량을 저장 가능한 상대 좌표로 변환합니다.
- */
+/** 화면 이동량 → 저장용 상대 좌표 */
 export function movePosition(
   rect: Rect,
   width: number,
@@ -146,9 +137,7 @@ export function movePosition(
   return { x: (next.x - rect.x) / width, y: (next.y - rect.y) / height };
 }
 
-/**
- * 기본 배치에 슬라이드별 컴포넌트 위치를 반영합니다.
- */
+/** 기본 배치·슬라이드 좌표 병합 */
 export function layout(
   width: number,
   height: number,
@@ -169,9 +158,7 @@ export function layout(
   };
 }
 
-/**
- * 명시적 줄바꿈과 글자 폭을 고려해 문구를 나눕니다.
- */
+/** 명시 개행·글자 폭 기준 줄바꿈 */
 function wrapParagraph(
   paragraph: string,
   maxWidth: number,
@@ -209,9 +196,7 @@ export function wrapText(
     .flatMap((paragraph) => wrapParagraph(paragraph, maxWidth, measure));
 }
 
-/**
- * 모든 문구가 영역에 들어가는 가장 큰 글자 크기를 찾습니다.
- */
+/** 영역 내 최대 폰트 크기 탐색 */
 export function fitText(
   text: string,
   box: Rect,

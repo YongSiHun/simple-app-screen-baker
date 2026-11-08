@@ -8,9 +8,7 @@ import { deviceGeometry } from '../utils/deviceGeometry.ts';
 import { cover } from '../utils/layout.ts';
 import type { Rect } from '../types/layout';
 import type { DeviceGeometry } from '../types/deviceGeometry';
-/**
- * 지정한 색상으로 둥근 사각형을 그립니다.
- */
+/** 색상별 둥근 사각형 */
 function rounded(
   ctx: CanvasRenderingContext2D,
   r: Rect,
@@ -23,9 +21,7 @@ function rounded(
   ctx.fill();
 }
 
-/**
- * 기기 프레임의 외곽과 그림자를 그립니다.
- */
+/** 기기 외곽·그림자 */
 function drawOutline(
   ctx: CanvasRenderingContext2D,
   geometry: DeviceGeometry,
@@ -46,9 +42,7 @@ function drawOutline(
   ctx.restore();
 }
 
-/**
- * 기기 화면에 원본 이미지 또는 업로드 안내를 그립니다.
- */
+/** 원본 화면/업로드 안내 */
 function drawScreenContent(
   ctx: CanvasRenderingContext2D,
   geometry: DeviceGeometry,
@@ -77,9 +71,7 @@ function drawScreenContent(
   );
 }
 
-/**
- * 기기 화면 내부에 맞춰 이미지 영역을 잘라 그립니다.
- */
+/** 기기 화면 내부 클리핑 */
 function drawScreen(
   ctx: CanvasRenderingContext2D,
   geometry: DeviceGeometry,
@@ -102,9 +94,7 @@ function drawScreen(
   ctx.restore();
 }
 
-/**
- * 스마트폰 노치 또는 기기의 카메라를 그립니다.
- */
+/** 폰 노치/기기 카메라 */
 function drawCamera(ctx: CanvasRenderingContext2D, geometry: DeviceGeometry) {
   const { frame, outer, bezel } = geometry;
   const isPhone = frame === 'phone';
@@ -137,9 +127,7 @@ function drawCamera(ctx: CanvasRenderingContext2D, geometry: DeviceGeometry) {
   ctx.fill();
 }
 
-/**
- * PC 프레임의 받침대를 그립니다.
- */
+/** PC 스탠드 */
 function drawStand(
   ctx: CanvasRenderingContext2D,
   geometry: DeviceGeometry,
@@ -176,9 +164,7 @@ function drawStand(
   );
 }
 
-/**
- * 기기 외곽·화면·장식을 순서대로 그립니다.
- */
+/** 기기 외곽 → 화면 → 장식 */
 export function drawDevice(
   ctx: CanvasRenderingContext2D,
   preset: OutputPreset,

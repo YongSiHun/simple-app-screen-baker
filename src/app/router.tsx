@@ -10,9 +10,7 @@ import { useEffect } from 'react';
 import { SiteLayout } from '../core/components/SiteLayout';
 import { EditorPage } from '../features/editor/screens/EditorPage';
 import { INFO_ROUTES } from '../features/info/routes';
-/**
- * 경로가 바뀌면 페이지 제목과 스크롤 위치를 갱신합니다.
- */
+/** 경로별 메타·스크롤 갱신 */
 function Root() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
@@ -33,9 +31,7 @@ function Root() {
   return <Outlet />;
 }
 
-/**
- * 페이지 로딩 오류와 복귀 링크를 표시합니다.
- */
+/** 로딩 오류·복귀 링크 */
 function ErrorPage() {
   return (
     <main className="document-page shell">

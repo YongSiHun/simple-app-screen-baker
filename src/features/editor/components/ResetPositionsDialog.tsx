@@ -1,8 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import type { ResetPositionsDialogProps } from '../types/components';
-/**
- * 전체 위치 초기화 여부를 확인합니다.
- */
+/** 전체 위치 리셋 확인 */
 export function ResetPositionsDialog({
   onConfirm,
   onClose,

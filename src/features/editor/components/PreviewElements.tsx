@@ -15,7 +15,7 @@ type Props = {
   setEditing: Dispatch<SetStateAction<SlideSelection | null>>;
 };
 
-/** Selection handles own pointer/keyboard behavior independently of canvas layout. */
+/** 선택 핸들 · 포인터/KBD 입력 분리 */
 export function PreviewElements(props: Props) {
   return SLIDE_ELEMENTS.map((element) => (
     <PreviewElement key={element} {...props} element={element} />

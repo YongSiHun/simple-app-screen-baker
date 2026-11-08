@@ -24,7 +24,7 @@
   --font-sans: Pretendard, system-ui, sans-serif;
 }
 :root {
-  /* Desktop workspace; smaller viewports scroll instead of reflowing. */
+  /* 데스크톱 레이아웃 고정 · 작은 뷰포트 스크롤 */
   --app-min-width: 1280px;
   --app-min-height: 800px;
   font-family: Pretendard, system-ui, sans-serif;
@@ -1255,7 +1255,7 @@ select {
   color: #1e293b;
 }
 
-/* Give the editor a larger canvas; zoomed previews remain scrollable. */
+/* 확대 프리뷰 스크롤 */
 .canvas-stage {
   display: block;
   overflow: auto;
@@ -1264,7 +1264,7 @@ select {
   min-height: 480px;
   height: clamp(480px, calc(100vh - 260px), 1050px);
   height: clamp(480px, calc(100svh - 260px), 1050px);
-  /* Keep zoomed children from changing the measured viewport size. */
+  /* 줌 요소의 뷰포트 측정 영향 차단 */
   contain: size;
   overflow-anchor: none;
   max-height: 1050px;
@@ -1462,7 +1462,7 @@ select {
   }
 }
 
-/* Supplemental content pages; the editor workspace keeps its existing layout. */
+/* 안내 페이지 공통 스타일 */
 .content-nav {
   display: flex;
   flex-wrap: wrap;

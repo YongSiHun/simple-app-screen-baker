@@ -6,7 +6,7 @@ import type { ImageHeader, JpegSegment } from '../types/images';
 import type { ImageSize } from '../../../core/types/images';
 import { matchesSignature } from './imageSignature.ts';
 
-/** Read a bounded JPEG segment without touching compressed image data. */
+/** JPEG 세그먼트 경계 검증 · 압축 데이터 제외 */
 function readSegment(
   { bytes, view }: ImageHeader,
   offset: number,

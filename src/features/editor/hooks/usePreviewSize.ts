@@ -1,8 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { OutputPreset } from '../types/project';
-/**
- * 화면 맞춤 배율에 필요한 미리보기 영역 크기를 계산합니다.
- */
+/** 화면 맞춤 프리뷰 크기 산출 */
 export function usePreviewSize(preset: OutputPreset) {
   const stage = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({
@@ -19,12 +17,10 @@ export function usePreviewSize(preset: OutputPreset) {
       return;
     }
 
-    /**
-     * 컨테이너 크기에 맞춰 캔버스 표시 크기를 갱신합니다.
-     */
+    /** 컨테이너 기준 캔버스 크기 갱신 */
     const resize = () => {
       const style = getComputedStyle(container);
-      // Leave a pixel for fractional layout rounding so fit mode does not overflow.
+      // 소수점 반올림 오버플로 방지 · 1px 여유
       const width = Math.max(
         0,
         Math.floor(

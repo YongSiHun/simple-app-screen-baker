@@ -1,13 +1,13 @@
-# Dependencies
+# Deps
 /node_modules/
 
-# Build outputs and test reports
+# Build/test out
 /dist/
 /dist-ssr/
 /coverage/
 *.tsbuildinfo
 
-# Local caches and temporary verification files
+# Cache/tmp
 /.vite/
 /.cache/
 /.npm-cache/
@@ -15,21 +15,21 @@
 /.wrangler/
 *.log
 
-# Fonts and original OFL license are copied by scripts/prepare-fonts.mjs
+# Fonts/OFL: prepare-fonts.mjs
 /public/fonts/
 
-# Yarn Classic installation metadata; keep yarn.lock tracked
+# Yarn meta · yarn.lock 유지
 .yarn-integrity
 /package-lock.json
 
-# Local environment files; keep shareable examples
+# Local env · example 유지
 .env
 .env.*
 !.env.example
 !.env.*.example
 *.local
 
-# OS and editor temporary files
+# OS/IDE tmp
 .DS_Store
 Thumbs.db
 Desktop.ini

@@ -13,7 +13,7 @@ interface PreviewTextEditorProps {
   onClose: () => void;
 }
 
-/** 미리보기에서 문구를 직접 수정하고 한 번의 실행 취소 작업으로 묶습니다. */
+/** 프리뷰 문구 편집 · Undo 1회 묶음 */
 export function PreviewTextEditor({
   slide,
   element,

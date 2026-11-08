@@ -3,9 +3,7 @@ import { Brand } from '../../../core/components/SiteLayout';
 import { Icon } from '../../../core/components/Icons';
 import { PRESETS } from '../../export/constants/presets';
 import type { EditorHeaderProps } from '../types/components';
-/**
- * 출력 기기 선택과 ZIP·PNG 다운로드 버튼을 표시합니다.
- */
+/** 출력 기기·ZIP/PNG DL */
 export function EditorHeader({
   presetId,
   busy,

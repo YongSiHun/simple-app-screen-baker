@@ -24,7 +24,7 @@ const loops = new Set([
   'DoWhileStatement',
 ]);
 
-/** A conservative, dependency-free project metric: nested branches cost more. */
+/** 자체 복잡도 지표 · 중첩 가중·외부 의존성 없음 */
 export const cognitiveComplexity = {
   meta: {
     type: 'suggestion',

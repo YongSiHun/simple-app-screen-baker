@@ -7,9 +7,7 @@ import {
   PREVIEW_DEFAULT_ZOOM,
 } from '../constants/preview';
 import type { PreviewToolbarProps } from '../types/components';
-/**
- * 컴포넌트 선택·배율·편집 이력 도구를 한 줄로 구성합니다.
- */
+/** 요소 선택·줌·이력 툴바 */
 export function PreviewToolbar({
   disabled,
   selected,

@@ -2,9 +2,7 @@ import { PNG_SIGNATURE } from '../../../core/constants/imageFormats.ts';
 import { PNG_CHUNK, CRC_TABLE } from '../constants/png.ts';
 import type { RgbaPixels } from '../types/png';
 
-/**
- * PNG 청크 검증에 사용하는 CRC-32 체크섬을 계산합니다.
- */
+/** CRC-32 산출 */
 export function crc32(bytes: Uint8Array) {
   let checksum = 0xffffffff;
 
@@ -15,9 +13,7 @@ export function crc32(bytes: Uint8Array) {
   return (checksum ^ 0xffffffff) >>> 0;
 }
 
-/**
- * 타입·길이·체크섬을 포함하는 PNG 청크를 만듭니다.
- */
+/** 타입·길이·CRC 포함 PNG 청크 생성 */
 function chunk(type: string, data: Uint8Array) {
   const result = new Uint8Array(data.length + 12);
   const view = new DataView(result.buffer);
@@ -32,9 +28,7 @@ function chunk(type: string, data: Uint8Array) {
   return result;
 }
 
-/**
- * 불투명 RGBA 픽셀을 PNG용 RGB 스캔라인으로 변환합니다.
- */
+/** 불투명 RGBA 픽셀 검증 */
 function validatePixels(width: number, height: number, rgba: RgbaPixels) {
   const dimensions = [width, height];
   const validSize = dimensions.every(
@@ -74,9 +68,7 @@ function createRgbScanlines(width: number, height: number, rgba: RgbaPixels) {
   return raw;
 }
 
-/**
- * 브라우저의 무손실 압축으로 PNG 이미지 데이터를 만듭니다.
- */
+/** 무손실 Deflate 압축 */
 async function compressScanlines(raw: Uint8Array<ArrayBuffer>) {
   const isCompressionUnavailable = typeof CompressionStream === 'undefined';
 
@@ -93,9 +85,7 @@ async function compressScanlines(raw: Uint8Array<ArrayBuffer>) {
   return new Uint8Array(await new Response(stream).arrayBuffer());
 }
 
-/**
- * 이미지 크기와 RGB 형식을 담은 PNG 헤더를 만듭니다.
- */
+/** 크기·RGB 형식 헤더 생성 */
 function createHeader(width: number, height: number) {
   const header = new Uint8Array(13);
   const view = new DataView(header.buffer);
@@ -107,9 +97,7 @@ function createHeader(width: number, height: number) {
   return header;
 }
 
-/**
- * PNG 시그니처와 청크를 하나의 바이트 배열로 합칩니다.
- */
+/** 시그니처·청크 병합 */
 function combineChunks(chunks: Uint8Array[]) {
   const length = chunks.reduce((total, part) => total + part.length, 0);
   const bytes = new Uint8Array(length);
@@ -123,9 +111,7 @@ function combineChunks(chunks: Uint8Array[]) {
   return bytes;
 }
 
-/**
- * RGB 픽셀을 검증된 24비트 PNG로 인코딩합니다.
- */
+/** 검증된 RGB 24-bit PNG 인코딩 */
 export async function encodeRgb(
   width: number,
   height: number,
@@ -144,9 +130,7 @@ export async function encodeRgb(
   return bytes;
 }
 
-/**
- * PNG 시그니처·출력 크기·색상 형식을 검사합니다.
- */
+/** PNG 시그니처·크기·RGB 검증 */
 function validateHeader(
   bytes: Uint8Array,
   view: DataView,
@@ -179,9 +163,7 @@ function validateHeader(
   }
 }
 
-/**
- * 청크의 길이와 체크섬을 검증하고 다음 위치를 반환합니다.
- */
+/** 청크 길이·CRC 검증·다음 위치 반환 */
 function readChunk(bytes: Uint8Array, view: DataView, offset: number) {
   const length = view.getUint32(offset);
   const nextOffset = offset + length + 12;
@@ -211,9 +193,7 @@ function readChunk(bytes: Uint8Array, view: DataView, offset: number) {
   return { type, nextOffset };
 }
 
-/**
- * 이미지 데이터와 종료 청크가 완전하게 존재하는지 검사합니다.
- */
+/** IDAT·IEND·파일 완결성 검증 */
 function validateChunks(bytes: Uint8Array, view: DataView) {
   let offset = 8;
   let hasImage = false;
@@ -233,9 +213,7 @@ function validateChunks(bytes: Uint8Array, view: DataView) {
   }
 }
 
-/**
- * PNG 헤더와 전체 청크 구조를 검증합니다.
- */
+/** PNG 헤더·청크 전체 검증 */
 export function verifyPng(bytes: Uint8Array, width: number, height: number) {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   validateHeader(bytes, view, width, height);

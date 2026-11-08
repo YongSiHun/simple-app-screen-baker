@@ -1,6 +1,4 @@
-/**
- * HTTP에서도 사용할 수 있는 프로젝트 내부 식별자를 생성합니다.
- */
+/** HTTP 호환 내부 ID 생성 */
 export function createId(): string {
   const hasNativeUuid = typeof globalThis.crypto.randomUUID === 'function';
 

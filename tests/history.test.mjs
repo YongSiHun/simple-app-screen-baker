@@ -13,13 +13,9 @@ afterEach(() => {
   useProject.setState(initial);
   useProject.getState().collectImages();
 });
-/**
- * 테스트에서 최신 프로젝트 상태를 조회합니다.
- */
+/** 최신 상태 조회 */
 const state = () => useProject.getState();
-/**
- * 테스트용 슬라이드 데이터를 준비합니다.
- */
+/** 슬라이드 fixture */
 const slide = () =>
   state().project.slides.find((slide) => slide.id === state().selectedId);
 
@@ -144,9 +140,7 @@ describe('undo and redo', () => {
 
       return {
         width: 100,
-        height: 200 /**
-         * 테스트용 비트맵의 해제 동작을 대체합니다.
-         */,
+        height: 200 /** 비트맵 close stub */,
         close: () => closed.push(id),
       };
     };

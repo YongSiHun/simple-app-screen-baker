@@ -1,6 +1,4 @@
-/**
- * 사이트의 저작권과 연락처를 표시합니다.
- */
+/** 저작권·연락처 */
 export function SiteCredits() {
   return (
     <span className="site-credits">

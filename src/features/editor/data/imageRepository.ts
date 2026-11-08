@@ -9,7 +9,7 @@ export interface ImageRepository {
   releaseUnused(used: Set<string>): void;
 }
 
-/** Owns browser resources and accounts for retained and in-flight memory in O(1). */
+/** 비트맵·URL 수명 관리 · 보관/예약 메모리 O(1) 집계 */
 export function createImageRepository(): ImageRepository {
   const resources = new Map<string, ImageResource>();
   let pixels = 0;

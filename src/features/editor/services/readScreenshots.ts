@@ -1,7 +1,7 @@
 import { loadImage } from './images.ts';
 import type { ScreenshotReadResult, ScreenshotBatch } from '../types/images';
 
-/** Decode one file and report a recoverable input error. */
+/** 단일 파일 디코딩 · 복구 가능 오류 반환 */
 async function readScreenshot(
   file: File,
   signal: AbortSignal,
@@ -16,7 +16,7 @@ async function readScreenshot(
   }
 }
 
-/** Read sequentially so a batch cannot allocate all decoded images at once. */
+/** 배치 순차 디코딩 · 메모리 동시 할당 제한 */
 export async function readScreenshots(
   files: File[],
   signal: AbortSignal,

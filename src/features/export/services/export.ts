@@ -6,9 +6,7 @@ import { encodeRgb } from '../data/png.ts';
 import { createExportPlan } from './plan.ts';
 import { save } from '../data/browserDownload.ts';
 export { save } from '../data/browserDownload.ts';
-/**
- * 현재 디자인과 슬라이드를 실제 크기의 RGB PNG로 렌더링합니다.
- */
+/** 디자인·슬라이드 → 원본 크기 RGB PNG */
 export async function png(
   project: Project,
   slide: Slide,
@@ -48,9 +46,7 @@ export async function png(
   }
 }
 
-/**
- * 현재 기기의 슬라이드를 순서대로 생성해 폴더 없는 ZIP으로 저장합니다.
- */
+/** 현재 기기 슬라이드 → 순차 ZIP · 폴더 제외 */
 export async function exportZip(
   project: Project,
   preset: OutputPreset,

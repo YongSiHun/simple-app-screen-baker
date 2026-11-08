@@ -12,9 +12,7 @@ import { layout, movePosition } from '../../rendering/utils/layout';
 import { resolveFrame } from '../../rendering/utils/frame';
 import { ARROW_DIRECTIONS } from '../constants/preview.ts';
 import type { SlideDragState, SlideSelection } from '../types/interaction';
-/**
- * 컴포넌트 선택과 포인터·키보드 이동을 관리합니다.
- */
+/** 요소 선택·포인터/KBD 이동 */
 export function useSlideInteraction(
   preset: OutputPreset,
   design: ProjectDesign,
@@ -36,9 +34,7 @@ export function useSlideInteraction(
   const selected = selection?.slideId === slide.id ? selection.element : null;
   const frame = resolveFrame(design.frame, preset.device);
   const base = layout(preset.width, preset.height, design.template, frame);
-  /**
-   * 드래그 시작 위치를 기록하고 편집 이력 묶음을 엽니다.
-   */
+  /** 드래그 원점 기록·이력 묶음 시작 */
   function startMove(
     event: PointerEvent<HTMLButtonElement>,
     element: SlideElement,
@@ -75,9 +71,7 @@ export function useSlideInteraction(
     };
   }
 
-  /**
-   * 화면상의 포인터 이동을 출력 크기에 비례한 위치로 변환합니다.
-   */
+  /** 포인터 이동 → 출력 상대 좌표 */
   function move(event: PointerEvent<HTMLButtonElement>) {
     const current = drag.current;
     const shouldIgnoreMove =
@@ -110,9 +104,7 @@ export function useSlideInteraction(
     );
   }
 
-  /**
-   * 드래그 상태와 포인터 캡처를 해제합니다.
-   */
+  /** 드래그·포인터 캡처 해제 */
   function releaseDrag(
     event: PointerEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>,
     pointer: number,
@@ -125,9 +117,7 @@ export function useSlideInteraction(
     }
   }
 
-  /**
-   * 드래그를 확정하거나 취소하고 포인터를 해제합니다.
-   */
+  /** 드래그 확정/취소·캡처 해제 */
   function endMove(event: PointerEvent<HTMLButtonElement>, cancel = false) {
     const current = drag.current;
     const isDifferentPointer =
@@ -150,9 +140,7 @@ export function useSlideInteraction(
     releaseDrag(event, event.pointerId);
   }
 
-  /**
-   * 진행 중인 드래그를 시작 위치로 되돌립니다.
-   */
+  /** 드래그 원점 복원 */
   function cancelDrag(event: KeyboardEvent<HTMLButtonElement>) {
     const activeDrag = drag.current;
     const hasNoActiveDrag = activeDrag === null;
@@ -166,9 +154,7 @@ export function useSlideInteraction(
     releaseDrag(event, activeDrag.pointer);
   }
 
-  /**
-   * 방향키 입력을 미세 이동 또는 빠른 이동으로 적용합니다.
-   */
+  /** 방향키 미세/빠른 이동 */
   function moveWithArrow(
     event: KeyboardEvent<HTMLButtonElement>,
     element: SlideElement,
@@ -194,9 +180,7 @@ export function useSlideInteraction(
     position(slide.id, element, nextPosition);
   }
 
-  /**
-   * 선택한 컴포넌트의 이동·선택 해제·드래그 취소를 처리합니다.
-   */
+  /** 요소 이동·선택 해제·드래그 취소 */
   function keyMove(
     event: KeyboardEvent<HTMLButtonElement>,
     element: SlideElement,
@@ -227,9 +211,7 @@ export function useSlideInteraction(
     moveWithArrow(event, element);
   }
 
-  /**
-   * 포인터 캡처를 잃으면 진행 중인 드래그를 확정합니다.
-   */
+  /** 캡처 유실 시 드래그 확정 */
   function finishDrag() {
     const hasNoActiveDrag = drag.current === null;
 

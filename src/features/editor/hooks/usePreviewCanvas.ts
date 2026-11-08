@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { OutputPreset, ProjectDesign, Slide } from '../types/project';
 import { render } from '../../rendering/services/render';
-/**
- * Coalesce rapid edits into one frame and discard cancelled canvas work.
- */
+/** rAF 편집 병합 · 취소 렌더 폐기 */
 export function usePreviewCanvas(
   preset: OutputPreset,
   design: ProjectDesign,

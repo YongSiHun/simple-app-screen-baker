@@ -3,9 +3,7 @@ interface Env {
 }
 
 export default {
-  /**
-   * 모든 HTTP 경로를 HTTPS로 전환한 뒤 정적 페이지와 파일을 제공합니다.
-   */
+  /** HTTP → HTTPS · 정적 페이지/파일 제공 */
   fetch(request: Request, env: Env): Promise<Response> | Response {
     const url = new URL(request.url);
     const isHttp = url.protocol === 'http:';

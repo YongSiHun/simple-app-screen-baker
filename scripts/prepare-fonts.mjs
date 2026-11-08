@@ -17,7 +17,7 @@ for (const path of ['LICENSE', 'LICENSE.txt', 'dist/LICENSE.txt']) {
     license = await readFile(new URL(path, base), 'utf8');
     break;
   } catch {
-    /* Try the next package license location. */
+    /* 다음 라이선스 경로 시도 */
   }
 }
 

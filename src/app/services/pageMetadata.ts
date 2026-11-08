@@ -6,7 +6,7 @@ import {
   updateCanonicalMetadata,
 } from '../../core/data/documentMetadata';
 
-/** Resolves route metadata; browser document writes stay in the data adapter. */
+/** 경로 메타 해석 · DOM 쓰기는 어댑터 위임 */
 export function syncPageMetadata(pathname: string) {
   const pagePath = pathname.replace(/\/+$/, '') || '/';
   const title =

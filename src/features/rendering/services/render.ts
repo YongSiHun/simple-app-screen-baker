@@ -8,9 +8,7 @@ import { fitText } from '../utils/layout.ts';
 import type { Rect } from '../types/layout';
 import { ensureFont } from '../data/fonts.ts';
 export { ensureFont } from '../data/fonts.ts';
-/**
- * 문구를 영역에 맞게 줄바꿈하고 크기를 조절해 그립니다.
- */
+/** 문구 줄바꿈·크기 맞춤 렌더 */
 function drawText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -44,9 +42,7 @@ function drawText(
   );
 }
 
-/**
- * 배경·기기·문구를 미리보기 또는 다운로드 해상도로 그립니다.
- */
+/** 배경·기기·문구 → 프리뷰/DL 렌더 */
 export async function render(
   canvas: HTMLCanvasElement,
   preset: OutputPreset,

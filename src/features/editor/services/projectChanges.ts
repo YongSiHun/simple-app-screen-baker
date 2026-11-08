@@ -13,9 +13,7 @@ import type {
 } from '../types/project';
 import type { ProjectSnapshot } from '../types/history';
 
-/**
- * 기본 문구를 가진 빈 슬라이드를 생성합니다.
- */
+/** 기본 문구의 빈 슬라이드 생성 */
 export function createSlide(): Slide {
   return {
     id: createId(),
@@ -25,9 +23,7 @@ export function createSlide(): Slide {
   };
 }
 
-/**
- * 원본 프로젝트를 유지하며 지정한 슬라이드만 변경합니다.
- */
+/** 원본 유지 · 지정 슬라이드 갱신 */
 function updateSlide(
   project: Project,
   id: string,
@@ -41,9 +37,7 @@ function updateSlide(
   };
 }
 
-/**
- * 현재 슬라이드의 모든 컴포넌트를 기본 위치로 되돌립니다.
- */
+/** 현재 슬라이드 전체 위치 리셋 */
 export function resetSlidePositions(
   state: ProjectSnapshot,
   id: string,
@@ -66,9 +60,7 @@ export function resetSlidePositions(
   };
 }
 
-/**
- * 달라진 디자인 설정만 프로젝트에 적용합니다.
- */
+/** 변경 디자인만 반영 */
 export function updateDesign(
   state: ProjectSnapshot,
   patch: Partial<ProjectDesign>,
@@ -90,9 +82,7 @@ export function updateDesign(
   };
 }
 
-/**
- * 달라진 제목과 부제목만 해당 슬라이드에 적용합니다.
- */
+/** 변경 제목·부제만 반영 */
 export function updateText(
   state: ProjectSnapshot,
   id: string,
@@ -121,9 +111,7 @@ export function updateText(
   };
 }
 
-/**
- * 기본 위치는 제거하고 이동한 컴포넌트의 위치만 보관합니다.
- */
+/** 기본 좌표 제거 · 이동 좌표만 보관 */
 function updateElementPositions(
   slide: Slide,
   element: SlideElement,
@@ -143,9 +131,7 @@ function updateElementPositions(
   return positions;
 }
 
-/**
- * 선택한 컴포넌트의 위치를 다른 요소와 독립적으로 변경합니다.
- */
+/** 선택 요소 좌표만 갱신 */
 export function updatePosition(
   state: ProjectSnapshot,
   id: string,
@@ -168,9 +154,7 @@ export function updatePosition(
   };
 }
 
-/**
- * 빈 슬라이드를 추가하고 새 슬라이드를 선택합니다.
- */
+/** 빈 슬라이드 추가·선택 */
 export function addSlide(state: ProjectSnapshot): Partial<ProjectSnapshot> {
   const slide = createSlide();
 
@@ -180,9 +164,7 @@ export function addSlide(state: ProjectSnapshot): Partial<ProjectSnapshot> {
   };
 }
 
-/**
- * 첫 이미지는 현재 슬라이드에, 나머지는 새 슬라이드에 연결합니다.
- */
+/** 첫 이미지 → 현재 슬라이드 · 나머지 → 신규 */
 export function attachScreenshots(
   state: ProjectSnapshot,
   ids: string[],
@@ -204,9 +186,7 @@ export function attachScreenshots(
   return { project: { ...state.project, slides } };
 }
 
-/**
- * 슬라이드를 삭제하되 프로젝트에 최소 한 장을 유지합니다.
- */
+/** 슬라이드 삭제 · 최소 1장 유지 */
 export function removeSlide(
   state: ProjectSnapshot,
   id: string,
@@ -224,9 +204,7 @@ export function removeSlide(
   };
 }
 
-/**
- * 이미지 참조와 문구를 유지한 슬라이드 복사본을 만듭니다.
- */
+/** 이미지 참조·문구 유지 복제 */
 export function duplicateSlide(
   state: ProjectSnapshot,
   id: string,
@@ -250,9 +228,7 @@ export function duplicateSlide(
   return { project: { ...state.project, slides }, selectedId: duplicate.id };
 }
 
-/**
- * 목록 범위 안에서 슬라이드의 순서를 변경합니다.
- */
+/** 범위 내 슬라이드 재정렬 */
 export function moveSlide(
   state: ProjectSnapshot,
   id: string,

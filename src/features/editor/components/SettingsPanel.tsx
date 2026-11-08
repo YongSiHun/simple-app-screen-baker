@@ -6,9 +6,7 @@ import {
   StyleSettings,
 } from './SettingsSections';
 import type { SettingsPanelProps } from '../types/components';
-/**
- * 업로드·템플릿·문구·스타일 설정을 구성합니다.
- */
+/** 업로드·템플릿·문구·스타일 설정 */
 export const SettingsPanel = memo(function SettingsPanel({
   kind,
   preset,

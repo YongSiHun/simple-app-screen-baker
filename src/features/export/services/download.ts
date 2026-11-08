@@ -32,7 +32,7 @@ async function downloadZip({ project, preset, progress }: DownloadContext) {
   return 'ZIP 다운로드 완료' + notice;
 }
 
-/** New formats add a handler without branching in the UI lifecycle. */
+/** 형식별 핸들러 등록 · UI 분기 제외 */
 const downloadHandlers: Record<ExportFormat, DownloadHandler> = {
   png: downloadPng,
   zip: downloadZip,

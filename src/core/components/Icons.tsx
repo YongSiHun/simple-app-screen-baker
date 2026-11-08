@@ -1,9 +1,7 @@
 import type { IconProps } from '../types/icons';
 import { ICON_PATHS } from '../constants/icons';
 
-/**
- * 이름에 맞는 공통 SVG 아이콘을 표시합니다.
- */
+/** 공통 SVG 아이콘 */
 export function Icon({ name, size = 20 }: IconProps) {
   return (
     <svg

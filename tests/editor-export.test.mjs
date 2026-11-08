@@ -39,9 +39,7 @@ it('exports only the current device with flat consecutive ZIP names and preserve
   const initial = useProject.getState();
   const bitmap = {
     width: 100,
-    height: 200 /**
-     * 테스트용 비트맵의 해제 동작을 대체합니다.
-     */,
+    height: 200 /** 비트맵 close stub */,
     close() {},
   };
   const originalBitmap = globalThis.createImageBitmap;
@@ -108,30 +106,22 @@ it('exports only the current device with flat consecutive ZIP names and preserve
   globalThis.document = {
     fonts: { load: async () => [], check: () => true },
     body: {
-      /**
-       * 테스트에서 다운로드 링크의 DOM 추가를 대체합니다.
-       */
+      /** DL 링크 append stub */
       append() {},
     },
     createElement: (tag) =>
       tag === 'canvas'
         ? {
             width: 0,
-            height: 0 /**
-             * 테스트에서 사용하는 그리기 컨텍스트를 반환합니다.
-             */,
+            height: 0 /** 테스트용 ctx 반환 */,
             getContext: () => context,
           }
         : {
-            /**
-             * 테스트에서 저장 파일 이름을 기록합니다.
-             */
+            /** DL 파일명 기록 */
             click() {
               savedName = this.download;
             },
-            /**
-             * 테스트에서 다운로드 링크의 DOM 제거를 대체합니다.
-             */
+            /** DL 링크 remove stub */
             remove() {},
           },
   };
@@ -146,7 +136,7 @@ it('exports only the current device with flat consecutive ZIP names and preserve
     initial.position(initial.selectedId, 'title', { x: 0.02, y: 0.03 });
     initial.position(initial.selectedId, 'device', { x: 0.01, y: -0.08 });
     initial.duplicate(initial.selectedId);
-    initial.add(); // Empty slides are skipped without gaps in ZIP filenames.
+    initial.add(); // 빈 슬라이드 제외 · ZIP 파일명 연속 번호
     initial.move(useProject.getState().selectedId, -1);
     const project = useProject.getState().project;
     const preset = PRESETS.find((p) => p.id === 'ipad');

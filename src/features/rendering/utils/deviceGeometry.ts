@@ -9,9 +9,7 @@ import { contain, cover, layout } from './layout.ts';
 import { COMMON_ASPECT_RATIOS } from '../constants/devices.ts';
 import type { ImageSize } from '../../../core/types/images';
 
-/**
- * 스마트폰·태블릿·PC에 맞는 원본 화면 비율을 선택합니다.
- */
+/** 폰·태블릿·PC 원본 AR 선택 */
 function frameAspect(frame: DeviceKind, landscape: boolean) {
   const isPhone = frame === 'phone';
 
@@ -28,9 +26,7 @@ function frameAspect(frame: DeviceKind, landscape: boolean) {
   return { width: 16, height: 10 };
 }
 
-/**
- * 기기 프레임과 실제 이미지 영역의 크기·위치를 계산합니다.
- */
+/** 프레임·화면 크기/위치 산출 */
 export function deviceGeometry(
   width: number,
   height: number,
@@ -58,9 +54,7 @@ export function deviceGeometry(
   return { frame, arrangement, outer, bezel, radius, screen, aspect };
 }
 
-/**
- * 확대 없이 표시하는 데 필요한 원본 이미지 크기를 계산합니다.
- */
+/** 확대 없는 원본 권장 크기 */
 export function recommendedImageSize(screen: ImageSize, source?: ImageSize) {
   const fitted = source
     ? cover(source.width, source.height, { x: 0, y: 0, ...screen })
@@ -75,9 +69,7 @@ export function recommendedImageSize(screen: ImageSize, source?: ImageSize) {
   };
 }
 
-/**
- * 원본 크기를 읽기 쉬운 화면 비율로 표시합니다.
- */
+/** 원본 AR 표시 */
 export function imageAspectRatio(width: number, height: number) {
   const ratio = width / height;
   const match = COMMON_ASPECT_RATIOS.find(
@@ -99,9 +91,7 @@ export function imageAspectRatio(width: number, height: number) {
   return String(scaledWidth / divisor) + ':' + String(scaledHeight / divisor);
 }
 
-/**
- * 임의의 원본 크기를 약분하는 데 사용할 최대공약수를 구합니다.
- */
+/** AR 약분용 GCD */
 function greatestCommonDivisor(first: number, second: number): number {
   let remainder = second;
   let divisor = first;

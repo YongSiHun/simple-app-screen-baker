@@ -1,8 +1,6 @@
 import type { HistoryKeyEvent, HistoryCommand } from '../types/interaction';
 
-/**
- * 키 입력을 실행 취소·다시 실행 명령으로 해석합니다.
- */
+/** 키 입력 → Undo/Redo 명령 */
 export function historyShortcut(
   event: HistoryKeyEvent,
   editingText: boolean,

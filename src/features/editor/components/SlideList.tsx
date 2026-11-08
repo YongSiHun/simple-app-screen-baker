@@ -16,7 +16,7 @@ type SlideItemProps = Pick<Slide, 'id' | 'title' | 'images'> & {
   actions: Actions;
 };
 
-/** Rows receive visible content independently of dragged canvas positions. */
+/** 행 props는 표시 내용만 전달 · 드래그 좌표 제외 */
 const SlideItem = memo(function SlideItem({
   id,
   title,

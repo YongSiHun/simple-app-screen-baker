@@ -15,9 +15,7 @@ import { usePreviewCanvas } from '../hooks/usePreviewCanvas';
 import { useSlideInteraction } from '../hooks/useSlideInteraction';
 import { resolveFrame } from '../../rendering/utils/frame';
 import { layout } from '../../rendering/utils/layout';
-/**
- * 캔버스와 선택 영역을 연결해 슬라이드를 직접 편집합니다.
- */
+/** 캔버스·선택 영역 연결 */
 export function PreviewPanel({
   preset,
   design,

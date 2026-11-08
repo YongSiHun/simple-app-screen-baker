@@ -7,7 +7,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 try {
   await access(new URL('../.git', import.meta.url));
 } catch {
-  // Source archives can run without Git metadata.
+  // Git 메타 없는 소스 배포본 허용
   process.exit(0);
 }
 

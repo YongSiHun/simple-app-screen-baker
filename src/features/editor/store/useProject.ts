@@ -19,21 +19,15 @@ import {
 } from '../services/projectHistory.ts';
 import type { ProjectHistory, ProjectSnapshot } from '../types/history';
 export { usedImageIds } from '../services/projectHistory.ts';
-/**
- * 현재 프로젝트와 편집 이력에서 사용하지 않는 이미지를 해제합니다.
- */
+/** 미참조 이미지 해제 */
 function collect(state: ProjectHistory) {
   releaseUnused(usedImageIds(state));
 }
 
 const first = changes.createSlide();
-/**
- * 프로젝트 편집 상태와 실행 취소 가능한 변경 작업을 제공합니다.
- */
+/** 편집 상태·Undo/Redo 작업 */
 export const useProject = create<ProjectState>((set, get) => {
-  /**
-   * 편집 이력을 갱신하고 이미지 참조를 정리합니다.
-   */
+  /** 이력 갱신·이미지 GC */
   const updateHistory = (
     update: (state: ProjectState) => Partial<ProjectHistory>,
   ) =>
@@ -43,9 +37,7 @@ export const useProject = create<ProjectState>((set, get) => {
 
       return patch;
     });
-  /**
-   * 프로젝트 변경을 실행 취소 가능한 작업으로 적용합니다.
-   */
+  /** 변경 커밋·이력 기록 */
   const commit = (update: (state: ProjectState) => Partial<ProjectSnapshot>) =>
     updateHistory((state) => recordHistoryChange(state, update(state)));
 
@@ -61,80 +53,46 @@ export const useProject = create<ProjectState>((set, get) => {
     past: [],
     future: [],
     transaction: null,
-    /**
-     * 프로젝트와 편집 이력에서 참조하지 않는 이미지를 정리합니다.
-     */
+    /** 미참조 이미지 GC */
     collectImages: () => collect(get()),
-    /**
-     * 연속 편집을 하나의 실행 취소 작업으로 묶기 시작합니다.
-     */
+    /** 연속 편집 묶음 시작 */
     beginEdit: () =>
       set((state) =>
         state.transaction ? {} : { transaction: snapshot(state) },
       ),
-    /**
-     * 연속 편집을 하나의 이력으로 확정합니다.
-     */
+    /** 연속 편집 확정 */
     endEdit: () => updateHistory(finishHistoryEdit),
-    /**
-     * 진행 중인 연속 편집을 취소합니다.
-     */
+    /** 연속 편집 취소 */
     cancelEdit: () => updateHistory(cancelHistoryEdit),
-    /**
-     * 직전 편집 작업을 되돌립니다.
-     */
+    /** Undo */
     undo: () => updateHistory(undoHistoryEdit),
-    /**
-     * 실행 취소한 편집 작업을 다시 적용합니다.
-     */
+    /** Redo */
     redo: () => updateHistory(redoHistoryEdit),
-    /**
-     * 현재 슬라이드의 전체 위치를 초기화합니다.
-     */
+    /** 현재 슬라이드 전체 위치 리셋 */
     resetPositions: (id) =>
       commit((state) => changes.resetSlidePositions(state, id)),
-    /**
-     * 편집할 슬라이드를 선택합니다.
-     */
+    /** 슬라이드 선택 */
     select: (selectedId) => set({ selectedId }),
-    /**
-     * 편집 내용을 유지하며 출력 기기만 변경합니다.
-     */
+    /** 출력 기기만 변경 */
     setPreset: (presetId) => set({ presetId }),
-    /**
-     * 프로젝트 공통 디자인을 변경합니다.
-     */
+    /** 공통 디자인 변경 */
     design: (patch) => commit((state) => changes.updateDesign(state, patch)),
-    /**
-     * 선택한 슬라이드의 문구를 변경합니다.
-     */
+    /** 슬라이드 문구 변경 */
     text: (id, patch) =>
       commit((state) => changes.updateText(state, id, patch)),
-    /**
-     * 선택한 컴포넌트의 위치를 변경합니다.
-     */
+    /** 선택 요소 위치 변경 */
     position: (id, element, position) =>
       commit((state) => changes.updatePosition(state, id, element, position)),
-    /**
-     * 빈 슬라이드를 추가합니다.
-     */
+    /** 빈 슬라이드 추가 */
     add: () => commit(changes.addSlide),
-    /**
-     * 업로드한 이미지를 슬라이드에 연결합니다.
-     */
+    /** 업로드 이미지 연결 */
     attach: (ids, kind) =>
       commit((state) => changes.attachScreenshots(state, ids, kind)),
-    /**
-     * 지정한 슬라이드를 삭제하고 편집 이력에 기록합니다.
-     */
+    /** 슬라이드 삭제·이력 기록 */
     remove: (id) => commit((state) => changes.removeSlide(state, id)),
-    /**
-     * 지정한 슬라이드를 복제합니다.
-     */
+    /** 슬라이드 복제 */
     duplicate: (id) => commit((state) => changes.duplicateSlide(state, id)),
-    /**
-     * 지정한 슬라이드의 순서를 변경합니다.
-     */
+    /** 슬라이드 재정렬 */
     move: (id, delta) => commit((state) => changes.moveSlide(state, id, delta)),
   };
 });

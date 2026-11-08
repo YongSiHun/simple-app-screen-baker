@@ -1,23 +1,19 @@
 import type { Project } from '../types/project';
 import type { ProjectSnapshot, ProjectHistory } from '../types/history';
 import { HISTORY_LIMIT } from '../constants/history.ts';
-/**
- * 실행 취소에 필요한 프로젝트와 선택 상태를 보관합니다.
- */
+/** 프로젝트·선택 상태 스냅샷 */
 export const snapshot = (state: ProjectSnapshot): ProjectSnapshot => ({
   project: state.project,
   selectedId: state.selectedId,
 });
-/**
- * 최대 보관 개수를 지키며 편집 이력을 추가합니다.
- */
+/** 이력 추가 · 보관 상한 적용 */
 function appendSnapshot(history: ProjectSnapshot[], entry: ProjectSnapshot) {
   return [...history, entry].slice(-HISTORY_LIMIT);
 }
 
 const projectImages = new WeakMap<Project, ReadonlySet<string>>();
 
-/** Immutable project snapshots share their cached image references across drag frames. */
+/** 불변 프로젝트별 이미지 참조 캐시 · 드래그 프레임 간 재사용 */
 function imageIdsFor(project: Project): ReadonlySet<string> {
   const cached = projectImages.get(project);
 
@@ -39,9 +35,7 @@ function collectProjectImages(project: Project, used: Set<string>) {
   }
 }
 
-/**
- * 현재 프로젝트와 복구 가능한 이력에서 사용하는 이미지를 모읍니다.
- */
+/** 현재·Undo/Redo 이력의 이미지 ID 수집 */
 export function usedImageIds(
   state: Pick<ProjectHistory, 'project' | 'past' | 'future' | 'transaction'>,
 ) {
@@ -66,9 +60,7 @@ export function usedImageIds(
   return used;
 }
 
-/**
- * 실제 프로젝트 변경만 실행 취소 이력에 기록합니다.
- */
+/** 실제 변경만 이력 기록 */
 export function recordHistoryChange(
   state: ProjectHistory,
   patch: Partial<ProjectSnapshot>,
@@ -88,9 +80,7 @@ export function recordHistoryChange(
   };
 }
 
-/**
- * 드래그나 연속 입력을 하나의 실행 취소 작업으로 확정합니다.
- */
+/** 연속 편집 → Undo 1회 확정 */
 export function finishHistoryEdit(
   state: ProjectHistory,
 ): Partial<ProjectHistory> {
@@ -111,9 +101,7 @@ export function finishHistoryEdit(
   };
 }
 
-/**
- * 진행 중인 편집을 이력에 남기지 않고 되돌립니다.
- */
+/** 연속 편집 취소 · 이력 미추가 */
 export function cancelHistoryEdit(
   state: ProjectHistory,
 ): Partial<ProjectHistory> {
@@ -127,9 +115,7 @@ export function cancelHistoryEdit(
   return { ...transaction, transaction: null };
 }
 
-/**
- * 직전 편집 상태를 복구하고 현재 상태를 다시 실행 이력에 넣습니다.
- */
+/** Undo · 현재 상태는 Redo로 이동 */
 export function undoHistoryEdit(
   state: ProjectHistory,
 ): Partial<ProjectHistory> {
@@ -153,9 +139,7 @@ export function undoHistoryEdit(
   };
 }
 
-/**
- * 실행 취소한 편집 상태를 다시 적용합니다.
- */
+/** Redo 적용 */
 export function redoHistoryEdit(
   state: ProjectHistory,
 ): Partial<ProjectHistory> {
